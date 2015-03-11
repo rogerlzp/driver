@@ -1,0 +1,22 @@
+<resources>
+
+    <!--
+        Base application theme for API 11+. This theme completely replaces
+        AppBaseTheme from res/values/styles.xml on API 11+ devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!-- API 11 theme customizations can go here. -->
+    </style>
+
+    <style name="return_button">
+        <item name="android:background">@drawable/hover_back</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:onClick">onBackButton</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+</resources>

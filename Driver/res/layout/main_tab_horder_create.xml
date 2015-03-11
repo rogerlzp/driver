@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:background="#fcfcfc"
+    android:orientation="vertical" >
+    
+            <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/title" 
+  			android:background="@drawable/title_bar"
+  			android:gravity="center_vertical"  >  
+  			
+            
+      		<TextView
+        		android:layout_width="wrap_content" 
+        		android:layout_height="wrap_content" 
+        		android:text="@string/create_horder"
+        		android:layout_centerInParent="true"
+        		android:textSize="20sp"		
+				android:textColor="#ffffff" /> 
+			<ImageButton 
+			    android:id="@+id/right_btn"
+			    android:layout_width="67dp" 
+        		android:layout_height="wrap_content"
+        		android:layout_alignParentRight="true" 
+        		android:layout_centerVertical="true"
+        		android:layout_marginRight="5dp"
+        		android:src="@drawable/title_btn_function"
+				android:background="@drawable/title_btn_right"
+				android:onClick="btnmainright"
+			    />      
+		</RelativeLayout>
+		
+           <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/shipper_username" 
+  			android:gravity="center_vertical"  > 
+    
+    
+      <EditText
+       android:id="@+id/shipper_username_et"
+       android:layout_width="220dp"
+       
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+       android:hint="@string/shipper_username"
+       />
+
+</RelativeLayout> 
+  <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			
+  			
+  			
+  			android:layout_height="45dp"
+  			android:id="@+id/shipper_address" 
+  			android:gravity="center_vertical"  >  
+  			
+    <Button
+        android:id="@+id/shipper_address_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+         android:onClick="chooseAddress"
+        android:text="@string/shipper_address" />
+
+   <TextView
+       android:id="@+id/shipper_address_tv"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+       android:clickable="true"
+       android:onClick="chooseAddress"
+       android:text="测试" />
+
+</RelativeLayout>
+    
+  <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/consignee_address" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/consignee_address_btn"
+         android:onClick="chooseAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/consignee_address" />
+    
+    
+      <TextView
+       android:id="@+id/consignee_address_tv"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+         android:clickable="true"
+       android:onClick="chooseAddress"
+       android:text="测试" />
+
+</RelativeLayout>
+    <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/shipper_date" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/shipper_date_btn"
+         android:onClick="chooseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/shipper_date" />
+    
+    
+      <TextView
+       android:id="@+id/shipper_date_tv"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+         android:clickable="true"
+       android:onClick="chooseDate"
+       android:text="测试" />
+
+</RelativeLayout>
+  
+    
+    
+   <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/cargo_type" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/cargo_type_btn"
+         android:onClick="chooseCargoType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cargo_type" />
+    
+    
+      <TextView
+       android:id="@+id/cargo_type_tv"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+         android:clickable="true"
+       android:onClick="chooseCargoType"
+       android:text="测试" />
+
+</RelativeLayout>
+
+   <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/cargo_weight" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/cargo_weight_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cargo_weight" />
+    
+    
+      <EditText
+       android:id="@+id/cargo_weight_et"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+       android:text="测试" />
+      
+</RelativeLayout>
+  <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/cargo_volume" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/cargo_volume_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cargo_volume" />
+    
+    
+      <EditText
+       android:id="@+id/cargo_volume_et"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+       android:text="测试" />
+</RelativeLayout>
+   
+   
+   <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/truck_type" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/truck_type_btn"
+         android:onClick="chooseTruckType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/truck_type" />
+    
+    
+      <TextView
+       android:id="@+id/truck_type_tv"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+         android:clickable="true"
+       android:onClick="chooseTruckType"
+       android:text="测试" />
+
+</RelativeLayout>
+ <RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/truck_length" 
+  			android:gravity="center_vertical"  > 
+    <Button
+        android:id="@+id/truck_length_btn"
+         android:onClick="chooseTruckLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/truck_length" />
+    
+    
+      <TextView
+       android:id="@+id/truck_length_tv"
+       android:layout_width="220dp"
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+         android:clickable="true"
+       android:onClick="chooseTruckLength"
+       android:text="测试" />
+
+</RelativeLayout>
+<RelativeLayout 
+  			android:layout_width="fill_parent"
+  			android:layout_height="45dp"
+  			android:id="@+id/horder_description" 
+  			android:gravity="center_vertical"  > 
+    
+    
+      <EditText
+       android:id="@+id/horder_description_et"
+       android:layout_width="220dp"
+       
+       android:layout_marginRight="20dp"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+       android:hint="@string/horder_desc"
+       />
+
+</RelativeLayout>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="createHorder"
+        android:text="@string/create" />
+
+</LinearLayout>

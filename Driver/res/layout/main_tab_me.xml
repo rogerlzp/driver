@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fcfcfc"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/title_bar"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/create_horder"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/right_btn"
+            android:layout_width="67dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/title_btn_right"
+            android:onClick="btnmainright"
+            android:src="@drawable/title_btn_function" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/shipper_username"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:background="#eee"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:onClick="gotoPersonal" >
+
+        <ImageView
+            android:id="@+id/portrait_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/user_dp" />
+
+        <TextView
+            android:id="@+id/name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/portrait_iv"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:text="name"
+            android:textColor="#000000"
+            android:textSize="21dp" />
+
+        <TextView
+            android:id="@+id/mobile_tv"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_below="@id/name_tv"
+            android:layout_toEndOf="@+id/portrait_iv"
+            android:layout_toRightOf="@+id/portrait_iv"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:text="mobile138"
+            android:textColor="#000000"
+            android:textSize="21dp" />
+    </RelativeLayout>
+Ï
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#000000" />
+
+    <RelativeLayout
+        android:id="@+id/truck_lincense"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:background="#eee"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:onClick="gotoTruck" >
+
+        <ImageView
+            android:id="@+id/truck_label_lincense_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/user_dp" />
+
+        <TextView
+            android:id="@+id/truck_license_tv"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/truck_label_lincense_iv"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:text="name"
+            android:textColor="#000000"
+            android:textSize="21dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#000000" />
+
+    <RelativeLayout
+        android:id="@+id/setting"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="#eee"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:onClick="gotoSetting" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:text="@string/settings"
+            android:textColor="#000000"
+            android:textSize="21dp" />
+    </RelativeLayout>
+
+</LinearLayout>
