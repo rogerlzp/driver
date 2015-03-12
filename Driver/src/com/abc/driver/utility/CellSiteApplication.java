@@ -25,6 +25,7 @@ import android.util.Log;
 import com.abc.driver.model.Truck;
 import com.abc.driver.model.User;
 import com.abc.driver.net.CellSiteHttpClient;
+import com.tencent.android.tpush.XGPushManager;
 
 public class CellSiteApplication extends Application {
 
@@ -74,6 +75,8 @@ public class CellSiteApplication extends Application {
 		// must be initialization first!!!
 
 		checkSDCardAvaible();
+		
+		
 		initCacheFileDir();
 		
 		initUser();
@@ -81,6 +84,8 @@ public class CellSiteApplication extends Application {
 		// initial the unnecessarily-started component
 		// startService(new Intent(this, InitService.class));
 	}
+	
+
 
 	public void CreatBitmapCache() {
 		mBitmapDecodeOption = new BitmapFactory.Options();
