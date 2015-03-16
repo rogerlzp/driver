@@ -49,7 +49,7 @@
                 <TextView
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
-            		android:text="微信"
+            		android:text="@string/reg_truck"
             		android:textColor="#fff"
             		android:textSize="12sp" />                
         	 </LinearLayout>
@@ -69,7 +69,7 @@
                 <TextView
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
-            		android:text="通讯录"
+            		android:text="@string/find_huoyun"
             		android:textColor="#fff"
             		android:textSize="12sp" />                
         	 </LinearLayout>
@@ -89,7 +89,7 @@
                 <TextView
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
-            		android:text="朋友们"
+            		android:text="@string/horderlist"
             		android:textColor="#fff"
             		android:textSize="12sp" />                
         	 </LinearLayout>
@@ -110,7 +110,7 @@
                 <TextView
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
-            		android:text="设置"
+            		android:text="@string/me"
             		android:textColor="#fff"
             		android:textSize="12sp" />                
         	 </LinearLayout>        

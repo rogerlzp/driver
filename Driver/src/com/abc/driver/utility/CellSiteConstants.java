@@ -6,11 +6,18 @@ public class CellSiteConstants {
 
 	public static final String CELLSITE_CONFIG = "cellsite_config";
 	public static final String USER_NAME = "username";
+	public static final String NAME = "name";
 	public static final String PASSWORD = "password";
+	
+	public static final String USER = "user";
+	public static final String PROFILE = "profile";
 	public static final String MOBILE = "mobile";
 	public static final String USER_ID = "user_id";
 	public static final String USER_PORTARIT = "portrait";
-
+	public static final String PROFILE_IMAGE_URL = "profile_image_url";
+	public static final String DRIVER_LICENSE_URL = "driver_license_image_url";
+//	public static final String DRIVER_LICENSE_URL = "driver_license_image_url";
+	
 	public static final String NORMAL_USER_MODE = "regUser";
 	public static final String VERIFY_CODE = "verify_code";
 
@@ -64,11 +71,27 @@ public class CellSiteConstants {
 	public final static int TAKE_PICTURE = 1001;
 	public final static int PICK_PICTURE = 1002;
 	public final static int CROP_PICTURE = 1010;
+	
+// image corp size
+	public static final int IMAGE_WIDTH = 180;
+	public static final int IMAGE_HEIGHT = 180;
+	
+	// down horder
+	public static final int NORMAL_OPERATION = 0; 
+	public static final int MORE_OPERATION = 1; 
+	// horder status 
+	public static final String HORDER_STATUS = "horder_status"; 
+	public static final int HORDER_WAITING = 0; 
+	public static final int HORDER_SENT = 1; 
+	public static final int HORDER_COMPLEMENTED = 2; 
+	// horder page count
+	public static final int PAGE_COUNT = 3;
+	
 
 	// �������� URL
 	// public static final String HOST = "http://20120328.welives.sinaapp.com/";
 	 public static final String HOST = "http://115.28.175.222:9091/";
-	//public static final String HOST = "http://192.168.2.106:9004/";
+	// public static final String HOST = "http://192.168.2.106:9009/";
 	public static final String LOGIN_URL = HOST + "login/fmobile";
 	public static final String CHANGE_PASSWORD_URL = HOST
 			+ "changePassword.php";
@@ -78,9 +101,16 @@ public class CellSiteConstants {
 	// image url for user
 	public final static String UPDATE_DRIVER_LICENSE_URL = HOST
 			+ "updateDriverLicense/fmobile";
+	public final static String UPDATE_USER_PORTRAIT_URL = HOST
+			+ "updateUserPortrait/fmobile";
 
+	// get my horder url
+	public static final String GET_MY_HORDER_URL = HOST + "getMyHorder/fmobile";
+	public static final String GET_HORDER_URL = HOST + "getHorder/fmobile";
 	
 	public final static String USER_IMAGE_URL = HOST + "";// TOOD
+	
+	public final static String USER_QUERY_URL = HOST + "getUserProfile/fmobile";
 	// 用户注册
 	// public static final String REGISTER_URL = HOST + "register/fmobile";
 

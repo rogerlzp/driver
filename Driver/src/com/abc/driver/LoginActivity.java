@@ -175,10 +175,22 @@ public class LoginActivity extends BaseActivity {
 					// store the username and password in sharedPreference
 					User normalUser = new User();
 					normalUser.setUsername(_username);
-					normalUser.setId(response
-							.getLong(CellSiteConstants.USER_ID));
 
-					app.attachUser(normalUser);
+					JSONObject userJson = response
+							.getJSONObject(CellSiteConstants.USER);
+					JSONObject profileJson = response
+							.getJSONObject(CellSiteConstants.PROFILE);
+
+					normalUser.setId(userJson
+							.getLong(CellSiteConstants.ID));
+					normalUser.setMobileNum(_username);
+					if(profileJson
+							.getString(CellSiteConstants.NAME) != null) {
+					normalUser.setName(profileJson
+							.getString(CellSiteConstants.NAME));
+					}
+
+
 
 					Log.d(TAG, "id=" + app.getUser().getId());
 					Editor sharedUser = getSharedPreferences(
@@ -188,20 +200,25 @@ public class LoginActivity extends BaseActivity {
 							.putString(CellSiteConstants.USER_NAME, _username);
 					sharedUser.putString(CellSiteConstants.PASSWORD,
 							passwordHash);
-					sharedUser.putString(CellSiteConstants.USER_ID,
-							response.get(CellSiteConstants.USER_ID).toString());
+					sharedUser.putString(CellSiteConstants.USER_ID, ""
+							+ userJson.getLong(CellSiteConstants.ID));
+					sharedUser.putString(CellSiteConstants.MOBILE, _username);
+					sharedUser.putString(CellSiteConstants.NAME,
+							profileJson.getString(CellSiteConstants.NAME));
 
-					Log.d(TAG, "id=" );
-					/*if (response.get(CellSiteConstants.USER_PORTARIT) == null) {
+					if (profileJson.get(CellSiteConstants.PROFILE_IMAGE_URL) == null) {
 						Log.d(TAG, "portrait is NULL");
 					} else {
 						sharedUser
 								.putString(
-										CellSiteConstants.USER_PORTARIT,
-										response.getString(CellSiteConstants.USER_PORTARIT));
+										CellSiteConstants.PROFILE_IMAGE_URL,
+										profileJson
+												.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+						normalUser.setProfileImageUrl(profileJson
+								.getString(CellSiteConstants.PROFILE_IMAGE_URL));
 					}
-					*/
-					
+					app.attachUser(normalUser);
+					Log.d(TAG, "id=" + app.getUser().getId());
 					sharedUser.commit();
 
 				}

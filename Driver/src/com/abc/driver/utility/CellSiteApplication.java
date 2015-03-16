@@ -22,10 +22,9 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
 
+import com.abc.driver.MainActivity.HorderType;
 import com.abc.driver.model.Truck;
 import com.abc.driver.model.User;
-import com.abc.driver.net.CellSiteHttpClient;
-import com.tencent.android.tpush.XGPushManager;
 
 public class CellSiteApplication extends Application {
 
@@ -67,7 +66,25 @@ public class CellSiteApplication extends Application {
 	final int IO_BUFFER_SIZE = 1024;
 	final int MEMORY_FOR_BITMAP_DECODE = 12 * 1024;
 	
+	// HorderType cache
+	HorderType[] gHorderType = new HorderType[3];
 	
+	Bitmap mPortaritBitmap = null;
+
+	
+	
+	public Bitmap getPortaritBitmap() {
+		return mPortaritBitmap;
+	}
+
+
+
+	public void setPortaritBitmap(Bitmap mPortaritBitmap) {
+		this.mPortaritBitmap = mPortaritBitmap;
+	}
+
+
+
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
@@ -100,7 +117,10 @@ public class CellSiteApplication extends Application {
 				CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE);
 		String username = sp.getString(CellSiteConstants.USER_NAME, null);
 		String userId = sp.getString(CellSiteConstants.USER_ID, null);
-
+		String mobileNum = sp.getString(CellSiteConstants.MOBILE, null);
+		String name = sp.getString(CellSiteConstants.NAME, null);
+		String profileImageUrl = sp.getString(CellSiteConstants.PROFILE_IMAGE_URL, null);
+		
 		user = new User();
 		if (username != null) 
 		{
@@ -109,6 +129,10 @@ public class CellSiteApplication extends Application {
 					user.setId(Long.parseLong(sp.getString(
 							CellSiteConstants.USER_ID, null)));
 				}
+				user.setMobileNum(mobileNum);
+				user.setProfileImageUrl(profileImageUrl);
+				user.setName(name);
+				this.attachUser(user);
 		} else 
 		{ // visitor mode
 			user.setId(User.INVALID_ID);
@@ -365,6 +389,17 @@ public class CellSiteApplication extends Application {
 				System.gc();
 			}
 			return null;
+		}
+	 
+	 
+		public void setHorderTypeCache(HorderType aHorderTypeCache, int aIndex)
+		{
+			gHorderType[aIndex] = aHorderTypeCache;		
+		}
+		
+		public HorderType getHorderTypeCache(int aIndex)
+		{
+			return gHorderType[aIndex];		
 		}
 
 }

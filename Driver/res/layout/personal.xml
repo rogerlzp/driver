@@ -52,6 +52,8 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:onClick="updatePortait"
             android:layout_marginTop="10dp"
             android:src="@drawable/user_dp" />
     </RelativeLayout>
@@ -162,11 +164,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
-            android:text="@string/portrait"
+            android:text="@string/identity"
             android:textSize="25sp" />
 
         <ImageView
-            android:id="@+id/identity_tv"
+            android:id="@+id/identity_iv"
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_alignParentRight="true"
@@ -183,7 +185,7 @@
         android:background="#000000" />
 
     <RelativeLayout
-        android:id="@+id/comany_name"
+        android:id="@+id/driver_license"
         android:layout_width="fill_parent"
         android:layout_height="60dp"
         android:background="#ffffff"
@@ -192,7 +194,7 @@
         android:onClick="updateMobile" >
 
         <TextView
-            android:id="@+id/company_name_label_tv"
+            android:id="@+id/driver_license_label_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -201,11 +203,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
-            android:text="@string/mobile"
+            android:text="@string/driver_lincense_code"
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/company_name_tv"
+            android:id="@+id/driver_license_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -214,7 +216,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:gravity="center_vertical"
-            android:text="@string/mobile"
+            android:text=""
             android:textSize="25sp" />
     </RelativeLayout>
 
@@ -224,7 +226,7 @@
         android:background="#000000" />
 
     <RelativeLayout
-        android:id="@+id/company_license"
+        android:id="@+id/driver_license_image"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:background="#ffffff"
@@ -233,7 +235,7 @@
         android:onClick="updatePortrait" >
 
         <TextView
-            android:id="@+id/company_license_label_tv"
+            android:id="@+id/driver_license_image_label_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -242,11 +244,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
-            android:text="@string/portrait"
+            android:text="@string/driver_lincense"
             android:textSize="25sp" />
 
         <ImageView
-            android:id="@+id/company_license_iv"
+            android:id="@+id/driver_license_iv"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_alignParentRight="true"

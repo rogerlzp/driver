@@ -23,10 +23,10 @@ public class DBHelper extends SQLiteOpenHelper {
 	Context mContext;
 	private final int BUFFER_SIZE = 1024;
 	
-	 private static String DB_PATH = "/data/data/com.abc.cellsite/databases/"; 
+	 private static String DB_PATH = "/data/data/com.abc.driver/databases/"; 
 	
 	   public static final String DB_NAME = "city.s3db";
-	    public static final String PACKAGE_NAME = "com.abc.cellsite";
+	    public static final String PACKAGE_NAME = "com.abc.driver";
 	 //   public static final String DB_PATH = "/data"
 	  //         + Environment.getDataDirectory().getAbsolutePath() + "/"+ PACKAGE_NAME;
 	

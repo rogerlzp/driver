@@ -3,6 +3,7 @@ package com.abc.driver;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.abc.driver.utility.CellSiteApplication;
@@ -31,6 +32,14 @@ public class BaseActivity extends Activity {
 
 	}
 	
+	public void onBackButton(View v)
+	{
+		finish();
+	//	onBackPressed();
+	}
+	
+	
+	
 	@Override
 	public void onBackPressed() {
 		long currentTime = System.currentTimeMillis();
@@ -41,5 +50,6 @@ public class BaseActivity extends Activity {
 			finish();
 		}
 	}
+	
 
 }
