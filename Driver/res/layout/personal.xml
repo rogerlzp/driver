@@ -68,9 +68,7 @@
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:background="#ffffff"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:onClick="gotoPersonal" >
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/name_label_tv"
@@ -95,6 +93,8 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:gravity="center_vertical"
+            android:clickable="true"
+            android:onClick="changeName"
             android:text="@string/username"
             android:textSize="25sp" />
     </RelativeLayout>

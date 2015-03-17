@@ -81,6 +81,12 @@ public class PersonalActivity extends BaseActivity {
 
 	}
 
+	public void initViewData() {
+		nameTv.setText(app.getUser().getName());
+		mobileNumTv.setTag(app.getUser().getMobileNum());
+	
+	}
+	
 	public void initData() {
 		userDownLoadTask = new MyUserDownLoadTask();
 		userDownLoadTask.execute(app.getUser().getId());
@@ -114,7 +120,7 @@ public class PersonalActivity extends BaseActivity {
 			}
 
 			if (result == CellSiteConstants.RESULT_SUC) {
-				// initView();
+				 initViewData();
 				setPortraitImage();
 			}
 		}
@@ -167,6 +173,14 @@ public class PersonalActivity extends BaseActivity {
 										.getString(CellSiteConstants.DRIVER_LICENSE_URL));
 			}
 
+			if (profileJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
+				app.getUser().setName(
+						profileJson.getString(CellSiteConstants.NAME));
+			}
+			if (userJson.get(CellSiteConstants.MOBILE) != JSONObject.NULL) {
+				app.getUser().setMobileNum(
+						userJson.getString(CellSiteConstants.MOBILE));
+			}
 
 
 		} catch (JSONException e) {
@@ -451,6 +465,17 @@ public class PersonalActivity extends BaseActivity {
 			}
 			return CellSiteConstants.UNKNOWN_ERROR;
 		}
+	}
+	
+	
+	/**
+	 * 跳转到ChangeNameActivity去修改名字
+	 */
+	public void changeName(View v) {
+		Intent intent = new Intent(PersonalActivity.this,
+				ChangeNameActivity.class);
+		startActivity(intent);
+
 	}
 
 }

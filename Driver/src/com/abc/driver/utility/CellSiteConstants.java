@@ -104,6 +104,10 @@ public class CellSiteConstants {
 	public final static String UPDATE_USER_PORTRAIT_URL = HOST
 			+ "updateUserPortrait/fmobile";
 
+	public final static String UPDATE_USERNAME_URL = HOST
+			+ "updateUsername/fmobile";
+	
+	
 	// get my horder url
 	public static final String GET_MY_HORDER_URL = HOST + "getMyHorder/fmobile";
 	public static final String GET_HORDER_URL = HOST + "getHorder/fmobile";

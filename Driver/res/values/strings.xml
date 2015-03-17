@@ -118,6 +118,8 @@
     <string name="Confirm">确定</string>
     <string name="Cancel">取消</string>
     <string name="confirmquit">确认退出</string>
+    <string name="updateName">更改名字</string>
+    <string name="updateNameHint">你的姓名</string>
     <!-- Setting  start -->
 
 
