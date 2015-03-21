@@ -26,6 +26,7 @@ import com.abc.driver.utility.CellSiteDefException;
 import com.abc.driver.utility.PasswordService;
 import com.abc.driver.utility.Utils;
 import com.abc.driver.utility.CellSiteApplication.NETWORK_STATUS;
+import com.tencent.android.tpush.XGPushConfig;
 
 public class LoginActivity extends BaseActivity {
 
@@ -47,6 +48,8 @@ public class LoginActivity extends BaseActivity {
 		if (app.ConnectNetwork() == NETWORK_STATUS.OFFLINE) {
 			Utils.createNetworkStatusDlg(LoginActivity.this);
 		}
+
+		deviceToken = XGPushConfig.getToken(this);
 	}
 
 	public void initView() {
@@ -71,6 +74,7 @@ public class LoginActivity extends BaseActivity {
 
 			String username = usernameEt.getText().toString().trim();
 			String password = passwordEt.getText().toString().trim();
+			// 获取toekn, 每次login 的时候 update devicetoken
 
 			if (username.length() == 0) {
 				Toast.makeText(this, R.string.login_username_hint,
@@ -104,14 +108,14 @@ public class LoginActivity extends BaseActivity {
 
 			mNormalLoginTask = new NormalLoginTask();
 			mNormalLoginTask.execute(new String[] { username, password,
-					loginType });
+					deviceToken, loginType });
 		}
 	}
 
 	private class NormalLoginTask extends AsyncTask<String, String, Integer> {
 		@Override
 		public Integer doInBackground(String... params) {
-			return normalLogin(params[0], params[1], params[2]);
+			return normalLogin(params[0], params[1], params[2], params[3]);
 		}
 
 		@Override
@@ -124,30 +128,21 @@ public class LoginActivity extends BaseActivity {
 			if (this.isCancelled()) {
 				return;
 			}
-			Integer resCode = result;// Integer.parseInt(result);
-			if (resCode == CellSiteConstants.LOGIN_SUCC) {
-				// TODO: set for different user
-				// app.setUserMode(CellSiteConstants.NORMAL_USER_MODE);
+			if (result == CellSiteConstants.RESULT_SUC) {
 				Intent intent = new Intent(LoginActivity.this,
 						MainActivity.class);
 				startActivity(intent);
 				finish();
-			} else if (resCode == CellSiteConstants.LOGIN_BAD_PASSWORD) {
+			} else if (result == CellSiteConstants.LOGIN_FAILED) {
 				Log.d(TAG, "Correct Username, but wrong Password");
 				passwordEt.setText("");
-				Toast.makeText(getApplicationContext(), "�����������������",
-						Toast.LENGTH_LONG).show();
-			} else if (resCode == CellSiteConstants.LOGIN_BAD_USERNAME) {
-				Log.d(TAG, "wrong username");
-				usernameEt.setText("");
-				passwordEt.setText("");
-				Toast.makeText(getApplicationContext(), "�û����������������",
+				Toast.makeText(getApplicationContext(), "用户名或者密码错误",
 						Toast.LENGTH_LONG).show();
 			}
 		}
 
 		protected Integer normalLogin(String _username, String _password,
-				String account_type) {
+				String _deviceToken, String account_type) {
 			String passwordHash = "";
 			try {
 				passwordHash = PasswordService.getInstance().encrypt(_password);
@@ -161,6 +156,11 @@ public class LoginActivity extends BaseActivity {
 					CellSiteConstants.USER_NAME, _username));
 			postParameters
 					.add(new BasicNameValuePair("password", passwordHash));
+			postParameters.add(new BasicNameValuePair(
+					CellSiteConstants.DEVICE_TOKEN, _deviceToken));
+			postParameters.add(new BasicNameValuePair(
+					CellSiteConstants.ROLE_ID, ""
+							+ CellSiteConstants.DRIVER_ROLE_ID));
 
 			Log.d(TAG, "password: " + passwordHash);
 
@@ -181,21 +181,37 @@ public class LoginActivity extends BaseActivity {
 					JSONObject profileJson = response
 							.getJSONObject(CellSiteConstants.PROFILE);
 
-					normalUser.setId(userJson
-							.getLong(CellSiteConstants.ID));
+					normalUser.setId(userJson.getLong(CellSiteConstants.ID));
 					normalUser.setMobileNum(_username);
-					if(profileJson
-							.getString(CellSiteConstants.NAME) != null) {
-					normalUser.setName(profileJson
-							.getString(CellSiteConstants.NAME));
-					}
-
-
 
 					Log.d(TAG, "id=" + app.getUser().getId());
 					Editor sharedUser = getSharedPreferences(
 							CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE)
 							.edit();
+
+					if (profileJson != null || profileJson != JSONObject.NULL) {
+						if (profileJson.getString(CellSiteConstants.NAME) != null) {
+							normalUser.setName(profileJson
+									.getString(CellSiteConstants.NAME));
+						}
+						sharedUser.putString(CellSiteConstants.NAME,
+								profileJson.getString(CellSiteConstants.NAME));
+
+						if (profileJson
+								.get(CellSiteConstants.PROFILE_IMAGE_URL) == null) {
+							Log.d(TAG, "portrait is NULL");
+						} else {
+							sharedUser
+									.putString(
+											CellSiteConstants.PROFILE_IMAGE_URL,
+											profileJson
+													.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+							normalUser
+									.setProfileImageUrl(profileJson
+											.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+						}
+					}
+
 					sharedUser
 							.putString(CellSiteConstants.USER_NAME, _username);
 					sharedUser.putString(CellSiteConstants.PASSWORD,
@@ -203,20 +219,7 @@ public class LoginActivity extends BaseActivity {
 					sharedUser.putString(CellSiteConstants.USER_ID, ""
 							+ userJson.getLong(CellSiteConstants.ID));
 					sharedUser.putString(CellSiteConstants.MOBILE, _username);
-					sharedUser.putString(CellSiteConstants.NAME,
-							profileJson.getString(CellSiteConstants.NAME));
 
-					if (profileJson.get(CellSiteConstants.PROFILE_IMAGE_URL) == null) {
-						Log.d(TAG, "portrait is NULL");
-					} else {
-						sharedUser
-								.putString(
-										CellSiteConstants.PROFILE_IMAGE_URL,
-										profileJson
-												.getString(CellSiteConstants.PROFILE_IMAGE_URL));
-						normalUser.setProfileImageUrl(profileJson
-								.getString(CellSiteConstants.PROFILE_IMAGE_URL));
-					}
 					app.attachUser(normalUser);
 					Log.d(TAG, "id=" + app.getUser().getId());
 					sharedUser.commit();

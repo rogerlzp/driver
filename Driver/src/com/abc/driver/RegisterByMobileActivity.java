@@ -30,6 +30,7 @@ import com.abc.driver.utility.CellSiteConstants;
 import com.abc.driver.utility.CellSiteDefException;
 import com.abc.driver.utility.PasswordService;
 import com.abc.driver.utility.Utils;
+import com.tencent.android.tpush.XGPushConfig;
 
 public class RegisterByMobileActivity extends Activity {
 
@@ -48,6 +49,8 @@ public class RegisterByMobileActivity extends Activity {
 	GetVerifyCodeTask mGetVerifyCodeTask;
 	ProgressDialog mProgressdialog;
 
+	String deviceToken;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,6 +61,9 @@ public class RegisterByMobileActivity extends Activity {
 
 		setContentView(R.layout.register_via_mobile);
 		init();
+
+		deviceToken = XGPushConfig.getToken(this);
+		Log.d(TAG, "device token:" + deviceToken);
 	}
 
 	public void init() {
@@ -78,16 +84,17 @@ public class RegisterByMobileActivity extends Activity {
 			Toast.makeText(RegisterByMobileActivity.this, "请填写正确的手机号码",
 					Toast.LENGTH_SHORT).show();
 		}
-		mGetVerifyCodeTask  = new GetVerifyCodeTask();
+		mGetVerifyCodeTask = new GetVerifyCodeTask();
 		mGetVerifyCodeTask.execute(sMobile);
 	}
-	private class GetVerifyCodeTask extends AsyncTask<String, String, Integer>{
-		
+
+	private class GetVerifyCodeTask extends AsyncTask<String, String, Integer> {
+
 		@Override
-		public Integer doInBackground(String... params){
+		public Integer doInBackground(String... params) {
 			return getVerifycode(params[0]);
 		}
-		
+
 		@Override
 		public void onPostExecute(Integer result) {
 			if (mProgressdialog != null) {
@@ -99,15 +106,15 @@ public class RegisterByMobileActivity extends Activity {
 			if (result == CellSiteConstants.RESULT_SUC) {
 				Log.d(TAG, "succeed to get verify code");
 			} else {
-				//TODO
+				// TODO
 			}
 		}
 	}
-	
+
 	protected Integer getVerifycode(String _phoneNum) {
 		ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-		postParameters
-				.add(new BasicNameValuePair(CellSiteConstants.MOBILE, _phoneNum));
+		postParameters.add(new BasicNameValuePair(CellSiteConstants.MOBILE,
+				_phoneNum));
 
 		JSONObject response = null;
 		try {
@@ -116,18 +123,19 @@ public class RegisterByMobileActivity extends Activity {
 			int resultCode = Integer.parseInt(response.get(
 					CellSiteConstants.RESULT_CODE).toString());
 			if (resultCode == CellSiteConstants.RESULT_SUC) {
-				mVerifyCode  = response.get(CellSiteConstants.VERIFY_CODE).toString();
+				mVerifyCode = response.get(CellSiteConstants.VERIFY_CODE)
+						.toString();
 			}
 			return resultCode;
 
 		} catch (UnknownHostException e) {
-			//TODO
+			// TODO
 		} catch (Exception e) {
-			//TODO
+			// TODO
 		}
 		return CellSiteConstants.UNKNOWN_ERROR;
 	}
-	
+
 	public void onClick(View view) {
 		String sMobile = mobile_number_tv.getText().toString().trim();
 		if (!Utils.isValidMobile(sMobile)) {
@@ -135,15 +143,13 @@ public class RegisterByMobileActivity extends Activity {
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
-		String mInputCode = verify_code_tv.getText().toString().trim();
-		if (!mInputCode.equals(mVerifyCode)) {
-			Toast.makeText(RegisterByMobileActivity.this, "请填写正确的验证码",
-					Toast.LENGTH_SHORT).show();
-			return;
-		}
-
-		//String username = name_tv.getText().toString().trim();
+		/*
+		 * String mInputCode = verify_code_tv.getText().toString().trim(); if
+		 * (!mInputCode.equals(mVerifyCode)) {
+		 * Toast.makeText(RegisterByMobileActivity.this, "请填写正确的验证码",
+		 * Toast.LENGTH_SHORT).show(); return; }
+		 */
+		// String username = name_tv.getText().toString().trim();
 		String mobileNum = mobile_number_tv.getText().toString();
 
 		String password = password_tv.getText().toString();
@@ -162,18 +168,23 @@ public class RegisterByMobileActivity extends Activity {
 		mProgressdialog.show();
 
 		mRegisterWithServerTask = new RegisterWithServerTask();
-		mRegisterWithServerTask.execute(passwordHash, mobileNum);
+		mRegisterWithServerTask.execute(passwordHash, mobileNum, deviceToken);
 
 	}
 
-	int registerWithMobile(String _passwordHash, String _mobile) {
+	int registerWithMobile(String _passwordHash, String _mobile,
+			String _deviceToken) {
 
 		ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 		postParameters.add(new BasicNameValuePair(CellSiteConstants.PASSWORD,
 				_passwordHash));
-		Log.d(TAG, "password: " +_passwordHash);
+		Log.d(TAG, "password: " + _passwordHash);
 		postParameters.add(new BasicNameValuePair(CellSiteConstants.MOBILE,
 				_mobile));
+		postParameters.add(new BasicNameValuePair(
+				CellSiteConstants.DEVICE_TOKEN, _deviceToken));
+		postParameters.add(new BasicNameValuePair(CellSiteConstants.ROLE_ID, ""
+				+ CellSiteConstants.DRIVER_ROLE_ID));
 
 		JSONObject response = null;
 		try {
@@ -181,14 +192,14 @@ public class RegisterByMobileActivity extends Activity {
 					CellSiteConstants.REGISTER_URL, postParameters);
 
 			int resultCode = Integer.parseInt(response.get(
-					CellSiteConstants.RESULT).toString());
+					CellSiteConstants.RESULT_CODE).toString());
 			Log.d(TAG, "ResultCode = " + resultCode);
-			if (resultCode == CellSiteConstants.REGISTER_SUCC) {
+			if (CellSiteConstants.RESULT_SUC == resultCode) {
 				Log.d(TAG, "register successfully");
 
 				User user = new User();
 				user.setId(response.getLong(CellSiteConstants.USER_ID));
-			
+
 				app.attachUser(user);
 
 				// store the username and password in sharedPreference
@@ -201,6 +212,9 @@ public class RegisterByMobileActivity extends Activity {
 				sharedUser.commit();
 
 				// app.startToSearchLoc();
+			} else if (resultCode == CellSiteConstants.REGISTER_USER_EXISTS) {
+				// 用户名已经被注册
+
 			}
 			return resultCode;
 		} catch (Exception e) {
@@ -213,7 +227,7 @@ public class RegisterByMobileActivity extends Activity {
 			AsyncTask<String, String, Integer> {
 		@Override
 		public Integer doInBackground(String... params) {
-			return registerWithMobile(params[0], params[1]);
+			return registerWithMobile(params[0], params[1], params[2]);
 		}
 
 		@Override
@@ -227,19 +241,19 @@ public class RegisterByMobileActivity extends Activity {
 			if (this.isCancelled()) {
 				return;
 			}
-			if (result == CellSiteConstants.REGISTER_SUCC) {
+			if (CellSiteConstants.RESULT_SUC == result) {
 				Intent intent = new Intent(RegisterByMobileActivity.this,
 						MainActivity.class);
 				// intent.putExtra(MainActivity.TURN_TO_ACTIVITY,
 				// EditUserinfoActivity.class.getSimpleName());
 				startActivity(intent);
 				finish();
-			} else if (result == CellSiteConstants.REGISTER_USER_EXISTS) {
+			} else if (CellSiteConstants.REGISTER_USER_EXISTS == result) {
 				Toast.makeText(RegisterByMobileActivity.this,
 						res.getString(R.string.mobile_registered),
 						Toast.LENGTH_SHORT).show();
 
-				name_tv.setText("");
+				// name_tv.setText("");
 				mobile_number_tv.setText("");
 				password_tv.setText("");
 			} else // if( result == YouYuanConstants.REGISTER_FAIL ||
@@ -249,7 +263,7 @@ public class RegisterByMobileActivity extends Activity {
 						res.getString(R.string.CheckNetwork),
 						Toast.LENGTH_SHORT).show();
 
-				name_tv.setText("");
+				// name_tv.setText("");
 				mobile_number_tv.setText("");
 				password_tv.setText("");
 			}

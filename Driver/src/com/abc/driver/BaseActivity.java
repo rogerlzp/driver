@@ -3,10 +3,12 @@ package com.abc.driver;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.abc.driver.utility.CellSiteApplication;
+import com.tencent.android.tpush.XGPushConfig;
 
 /**
  * 
@@ -22,6 +24,9 @@ public class BaseActivity extends Activity {
 	long waitTime = 2000;
 	long touchTime = 0;
 	
+    String deviceToken; 
+   
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -29,7 +34,6 @@ public class BaseActivity extends Activity {
 		
 		res = getResources();
 		app = (CellSiteApplication) getApplication();
-
 	}
 	
 	public void onBackButton(View v)

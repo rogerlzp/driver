@@ -61,9 +61,8 @@ public class LaunchActivity extends BaseActivity {
 	public void registerXinge() {
 	     Context context = getApplicationContext();
 	     XGPushManager.registerPush(context);	
-	     
+	     deviceToken = XGPushConfig.getToken(this);
 	     //  获取toekn
-	     Log.d(TAG, "TOKEN_ID=" + XGPushConfig.getToken(this));
 	}
 	
 	private void enterMainActivity() {

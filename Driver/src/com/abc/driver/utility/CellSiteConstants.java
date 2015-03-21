@@ -8,11 +8,16 @@ public class CellSiteConstants {
 	public static final String USER_NAME = "username";
 	public static final String NAME = "name";
 	public static final String PASSWORD = "password";
+	public static final String DEVICE_TOKEN = "device_token";
+	
+	public static final int DRIVER_ROLE_ID = 1;
+	public static final int HUOZHU_ROLE_ID = 2;
 	
 	public static final String USER = "user";
 	public static final String PROFILE = "profile";
 	public static final String MOBILE = "mobile";
 	public static final String USER_ID = "user_id";
+	public static final String ROLE_ID = "role_id";
 	public static final String USER_PORTARIT = "portrait";
 	public static final String PROFILE_IMAGE_URL = "profile_image_url";
 	public static final String DRIVER_LICENSE_URL = "driver_license_image_url";
@@ -49,9 +54,11 @@ public class CellSiteConstants {
 
 	// RESULT
 	// login
-	public final static int LOGIN_SUCC = 10000; // login succeed
-	public final static int LOGIN_BAD_USERNAME = 10001; // bad username
-	public final static int LOGIN_BAD_PASSWORD = 10002; // bad password
+	public final static int REGISTER_USER_EXISTS = 10001; // bad username
+	public final static int REGISTER_INTEGRATION_ERROR = 10002; // bad username
+	public final static int LOGIN_FAILED = 10003; // login succeed
+	public final static int LOGIN_OTH_ERROR = 10004; // bad username
+	
 	public static final int UNKNOWN_ERROR = 10050;
 	public static final int UNKNOWN_HOST_ERROR = 10051;
 
@@ -90,8 +97,8 @@ public class CellSiteConstants {
 
 	// �������� URL
 	// public static final String HOST = "http://20120328.welives.sinaapp.com/";
-	 public static final String HOST = "http://115.28.175.222:9091/";
-	// public static final String HOST = "http://192.168.2.106:9009/";
+	  public static final String HOST = "http://115.28.175.222:9091/";
+	 // public static final String HOST = "http://192.168.2.106:9003/";
 	public static final String LOGIN_URL = HOST + "login/fmobile";
 	public static final String CHANGE_PASSWORD_URL = HOST
 			+ "changePassword.php";
@@ -116,10 +123,11 @@ public class CellSiteConstants {
 	
 	public final static String USER_QUERY_URL = HOST + "getUserProfile/fmobile";
 	// 用户注册
-	// public static final String REGISTER_URL = HOST + "register/fmobile";
+	 public static final String REGISTER_URL = HOST + "register/fmobile";
 
 	// driver     注册
-	public static final String REGISTER_URL = HOST + "registerDriver/fmobile";
+//	public static final String REGISTER_URL = HOST + "registerDriver/fmobile";
+	
 	public static final String VERIFY_URL = HOST + "verify/fmobile";
 	// public static final String REGISTER_URL =
 	// "http://115.28.175.222:9091/test1.php" ;
@@ -134,10 +142,9 @@ public class CellSiteConstants {
 	// TRUCK
 	public static final String UPDATE_TRUCK_URL = HOST + "updateTruck/fmobile";
 
-	public final static int REGISTER_SUCC = 10000; // login succeed
-	public final static int REGISTER_FAIL = 10001; // bad username
-	public final static int REGISTER_USER_EXISTS = 10002; // bad username
-	public final static int REGISTER_INTEGRATION_ERROR = 10003; // bad username
+
+	
+	
 
 	public static final String VERIFY_PHONE_NUMBE_URL = "http://m.youhubst.com/phone_cz.php?phone=";
 
