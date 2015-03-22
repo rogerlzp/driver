@@ -7,6 +7,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,7 +48,6 @@ public class ChangeNameActivity extends BaseActivity {
 		mUpdateUserTask = new UpdateUserTask();
 		mUpdateUserTask.execute("" + app.getUser().getId(), usernameEt
 				.getText().toString().trim());
-		this.finish();
 	}
 
 	private class UpdateUserTask extends AsyncTask<String, String, Integer> {
@@ -64,7 +64,8 @@ public class ChangeNameActivity extends BaseActivity {
 			Integer resCode = result;// Integer.parseInt(result);ØØØ
 			if (resCode == CellSiteConstants.RESULT_SUC) {
 				// TODO: set for different user
-
+				Intent intent = new Intent(ChangeNameActivity.this, PersonalActivity.class);
+				startActivity(intent);
 			}
 		}
 

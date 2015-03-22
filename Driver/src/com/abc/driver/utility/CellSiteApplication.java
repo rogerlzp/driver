@@ -223,7 +223,7 @@ public class CellSiteApplication extends Application {
 	
 	
 	
-	 public Bitmap downloadBmpByUrl(String relativePath, String userTag) {
+	 public synchronized Bitmap downloadBmpByUrl(String relativePath, String userTag) {
 			if (relativePath == null || relativePath.trim().length() == 0) {
 				return null;
 			}
@@ -231,7 +231,11 @@ public class CellSiteApplication extends Application {
 			String localPath = null;
 			String UrlStr = null;
 			String localDir = null;
+			
 			localPath = relativePath.substring(relativePath.lastIndexOf("/")+1, relativePath.length());
+			Log.d(TAG, "path="+relativePath);
+			Log.d(TAG, "path="+localPath);
+			
 				
 			UrlStr = CellSiteConstants.USER_IMAGE_URL + relativePath;  // image path from the server
 			localDir = userTag;
@@ -247,7 +251,7 @@ public class CellSiteApplication extends Application {
 						|| hasDownloadBmpList.contains(relativePath)) {
 					if (localFileExits) {
 						try {
-							inputStream = new FileInputStream(localPath);
+							inputStream = new FileInputStream(localFile);
 							result = BitmapFactory.decodeFileDescriptor(
 									inputStream.getFD(), null, mBitmapDecodeOption);
 						} catch (Exception e) {
@@ -283,7 +287,7 @@ public class CellSiteApplication extends Application {
 					if (localFileExits) {
 						localLastModify = localFile.lastModified();
 						if (localLastModify == sererLastModified) {
-							inputStream = new FileInputStream(localPath);
+							inputStream = new FileInputStream(localFile);
 							try {
 								result = BitmapFactory.decodeFileDescriptor(
 										inputStream.getFD(), null,

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
@@ -21,11 +22,11 @@ import android.widget.Toast;
 
 import com.abc.driver.model.User;
 import com.abc.driver.net.CellSiteHttpClient;
+import com.abc.driver.utility.CellSiteApplication.NETWORK_STATUS;
 import com.abc.driver.utility.CellSiteConstants;
 import com.abc.driver.utility.CellSiteDefException;
 import com.abc.driver.utility.PasswordService;
 import com.abc.driver.utility.Utils;
-import com.abc.driver.utility.CellSiteApplication.NETWORK_STATUS;
 import com.tencent.android.tpush.XGPushConfig;
 
 public class LoginActivity extends BaseActivity {
@@ -99,12 +100,13 @@ public class LoginActivity extends BaseActivity {
 			}
 
 			// TODO: normal login
-
+/*
 			Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 			startActivity(intent);
 
 			mProgressdialog.dismiss();
 			finish();
+*/
 
 			mNormalLoginTask = new NormalLoginTask();
 			mNormalLoginTask.execute(new String[] { username, password,
@@ -134,7 +136,6 @@ public class LoginActivity extends BaseActivity {
 				startActivity(intent);
 				finish();
 			} else if (result == CellSiteConstants.LOGIN_FAILED) {
-				Log.d(TAG, "Correct Username, but wrong Password");
 				passwordEt.setText("");
 				Toast.makeText(getApplicationContext(), "用户名或者密码错误",
 						Toast.LENGTH_LONG).show();
@@ -178,8 +179,15 @@ public class LoginActivity extends BaseActivity {
 
 					JSONObject userJson = response
 							.getJSONObject(CellSiteConstants.USER);
-					JSONObject profileJson = response
+					JSONObject profileJson  = null;
+					try{
+					 profileJson = response
 							.getJSONObject(CellSiteConstants.PROFILE);
+					} catch(JSONException e) {
+						Log.d(TAG, " The profile is not inited");
+						profileJson  = null;
+						// response.get(CellSiteConstants.PROFILE);
+					}
 
 					normalUser.setId(userJson.getLong(CellSiteConstants.ID));
 					normalUser.setMobileNum(_username);
@@ -189,7 +197,7 @@ public class LoginActivity extends BaseActivity {
 							CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE)
 							.edit();
 
-					if (profileJson != null || profileJson != JSONObject.NULL) {
+					if (profileJson != null) {
 						if (profileJson.getString(CellSiteConstants.NAME) != null) {
 							normalUser.setName(profileJson
 									.getString(CellSiteConstants.NAME));

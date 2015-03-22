@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
 	private LayoutInflater inflater;
 	int mCurrRadioIdx = 0;
 
-	private UpdateTruckTask mUpdateTruckTask;
+	private GetTruckTask mGetTruckTask;
 
 	//
 	// h货单
@@ -151,8 +151,7 @@ public class MainActivity extends BaseActivity {
 	TextView mMobileTv;
 	ImageView mPortraitIv;
 	DownloadImageTask mDownloadImageTask;
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -384,8 +383,8 @@ public class MainActivity extends BaseActivity {
 				// download user information
 				initMeView();
 				// download Truck information
-				mUpdateTruckTask = new UpdateTruckTask();
-				mUpdateTruckTask.execute("" + app.getUser().getId());
+				mGetTruckTask = new GetTruckTask();
+				mGetTruckTask.execute("" + app.getUser().getId());
 
 				break;
 			}
@@ -406,33 +405,33 @@ public class MainActivity extends BaseActivity {
 		public void onPageScrollStateChanged(int arg0) {
 		}
 	}
-	
-	// 
-	public void initMeView(){
-		 mNameTv = (TextView)findViewById(R.id.name_tv);
-		 mMobileTv =  (TextView)findViewById(R.id.mobile_tv);
-		 mPortraitIv = (ImageView)findViewById(R.id.portrait_iv);
-		 
+
+	//
+	public void initMeView() {
+		mNameTv = (TextView) findViewById(R.id.name_tv);
+		mMobileTv = (TextView) findViewById(R.id.mobile_tv);
+		mPortraitIv = (ImageView) findViewById(R.id.portrait_iv);
+
 		// init Data
-		 if(app.getUser().getName() != null) {
-		 mNameTv.setText(app.getUser().getName());
-		 }
-		 if(app.getUser().getMobileNum() != null) {
-		 mMobileTv.setText(app.getUser().getMobileNum());
-		 }
-		 setPortraitImage();
+		if (app.getUser().getName() != null) {
+			mNameTv.setText(app.getUser().getName());
+		}
+		if (app.getUser().getMobileNum() != null) {
+			mMobileTv.setText(app.getUser().getMobileNum());
+		}
+		setPortraitImage();
 	}
-	
+
 	public void setPortraitImage() {
 
 		String profileImageUrl = app.getUser().getProfileImageUrl();
-		
+
 		Log.d(TAG, "setPortraitImage");
 
 		if (profileImageUrl == null || profileImageUrl.equalsIgnoreCase("null")) {
 
-			
-			mPortraitIv.setImageResource(R.drawable.ic_launcher); // TODO: 更新默认图片
+			mPortraitIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																	// 更新默认图片
 
 		} else {
 			mDownloadImageTask = new DownloadImageTask();
@@ -445,8 +444,8 @@ public class MainActivity extends BaseActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Log.d(TAG, "URL=" + (String) params[0]);
-			app.setPortaritBitmap(app
-					.downloadBmpByUrl((String) params[0], params[1]));
+			app.setPortaritBitmap(app.downloadBmpByUrl((String) params[0],
+					params[1]));
 			return true;
 		}
 
@@ -456,20 +455,18 @@ public class MainActivity extends BaseActivity {
 			super.onPostExecute(result);
 			if (!this.isCancelled()) {
 				if (app.getPortaritBitmap() != null) {
-					mPortraitIv.setImageDrawable(new BitmapDrawable(
-							app.getPortaritBitmap() ));
+					mPortraitIv.setImageDrawable(new BitmapDrawable(app
+							.getPortaritBitmap()));
 					// TODO
 				}
 			}
 		}
 	}
 
-	
-
-	private class UpdateTruckTask extends AsyncTask<String, String, Integer> {
+	private class GetTruckTask extends AsyncTask<String, String, Integer> {
 		@Override
 		public Integer doInBackground(String... params) {
-			return updateTruckTask(params[0]);
+			return getTruckTask(params[0]);
 		}
 
 		@Override
@@ -483,7 +480,7 @@ public class MainActivity extends BaseActivity {
 			}
 		}
 
-		protected Integer updateTruckTask(String _userId) {
+		protected Integer getTruckTask(String _userId) {
 
 			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 			postParameters.add(new BasicNameValuePair(
@@ -529,6 +526,21 @@ public class MainActivity extends BaseActivity {
 							.setLicenseImageUrl(
 									truckObj.get(
 											CellSiteConstants.TRUCK_LICENSE_URL)
+											.toString());
+					app.getUser()
+					.getMyTruck().setPhotoImageUrl(
+							truckObj.get(
+									CellSiteConstants.TRUCK_PHOTO_URL)
+									.toString());
+					app.getUser()
+							.getMyTruck()
+							.setMobileNum(
+									truckObj.get(
+											CellSiteConstants.TRUCK_MOBILE_NUM)
+											.toString());
+					app.getUser()
+					.getMyTruck().setLicense(truckObj.get(
+											CellSiteConstants.TRUCK_LICENSE)
 											.toString());
 					//
 				}
@@ -862,7 +874,7 @@ public class MainActivity extends BaseActivity {
 
 	public void gotoPersonal(View v) {
 		Intent intent = new Intent(MainActivity.this, PersonalActivity.class);
-		//mPortaritBitmap
+		// mPortaritBitmap
 		startActivity(intent);
 	}
 

@@ -21,13 +21,30 @@ public class Truck  implements Serializable {
 	}
 	private int auditStatusId;
 
-	private String lincenPlateNumber;
+	private String license;
 	
+	public String getLicense() {
+		return license;
+	}
+
+	public void setLicense(String license) {
+		this.license = license;
+	}
 	private String  photoImageUrl;
 	private String licenseImageUrl;
 	
 	private int userId;
 	
+	private String mobileNum;
+	
+	public String getMobileNum() {
+		return mobileNum;
+	}
+
+	public void setMobileNum(String mobileNum) {
+		this.mobileNum = mobileNum;
+	}
+
 	protected int getUserId() {
 		return userId;
 	}
@@ -78,12 +95,7 @@ public class Truck  implements Serializable {
 	public void setStatusId(int statusId) {
 		this.statusId = statusId;
 	}
-	public String getLincenPlateNumber() {
-		return lincenPlateNumber;
-	}
-	public void setLincenPlateNumber(String lincenPlateNumber) {
-		this.lincenPlateNumber = lincenPlateNumber;
-	}
+
 	public String getPhotoImageUrl() {
 		return photoImageUrl;
 	}

@@ -33,7 +33,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.abc.driver.TruckActivity.DownloadImageTask;
 import com.abc.driver.net.CellSiteHttpClient;
 import com.abc.driver.utility.CellSiteConstants;
 import com.abc.driver.utility.CropOption;
@@ -44,17 +43,19 @@ public class PersonalActivity extends BaseActivity {
 
 	final String TAG = PersonalActivity.class.getSimpleName();
 
-	ImageView portraitIv, identityIv, driverLicenseIv;
+	ImageView mUserPortraitIv, mUserIdentityIv, mUserDriverLicenseIv;
 	TextView nameTv, driverLicenseTv, mobileNumTv;
 
-	Bitmap  mIdentityImage, mDriverLicenseImage;
+	Bitmap mIdentityImage, mDriverLicenseImage, mUserPortraitImage;
 
 	// SigleBmpDownLoadTask mSwitchDownloadTask;
 
 	ProgressDialog mProgressdialog;
 
 	MyUserDownLoadTask userDownLoadTask;
-	DownloadImageTask mDownloadImageTask;
+	DownloadDriverLicenseImageTask mDownloadDriverLicenseImageTask;
+	DownloadUserPortraitImageTask mDownloadUserPortraitImageTask;
+	DownloadUserIdentityImageTask mDownloadUserIdentityImageTask;
 
 	UpdateImageTask mUpdateImageTask;
 
@@ -69,37 +70,77 @@ public class PersonalActivity extends BaseActivity {
 
 		initView();
 		initData();
+		initViewData();
 	}
 
 	public void initView() {
-		portraitIv = (ImageView) findViewById(R.id.portrait_iv);
-		identityIv = (ImageView) findViewById(R.id.identity_iv);
-		driverLicenseIv = (ImageView) findViewById(R.id.driver_license_iv);
+		mUserPortraitIv = (ImageView) findViewById(R.id.portrait_iv);
+		mUserIdentityIv = (ImageView) findViewById(R.id.identity_iv);
+		mUserDriverLicenseIv = (ImageView) findViewById(R.id.driver_license_iv);
 		nameTv = (TextView) findViewById(R.id.name_tv);
 		driverLicenseTv = (TextView) findViewById(R.id.driver_license_tv);
 		mobileNumTv = (TextView) findViewById(R.id.mobile_tv);
-
 	}
 
 	public void initViewData() {
+
 		nameTv.setText(app.getUser().getName());
-		mobileNumTv.setTag(app.getUser().getMobileNum());
-	
+		mobileNumTv.setText(app.getUser().getMobileNum());
+
+		if (null != app.getUser()) {
+			String portraitUrl = app.getUser().getProfileImageUrl();
+			if (portraitUrl == null || portraitUrl.equalsIgnoreCase("null")) {
+				mUserPortraitIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																			// 更新默认图片
+
+			} else {
+				mDownloadUserPortraitImageTask = new DownloadUserPortraitImageTask();
+				mDownloadUserPortraitImageTask.execute(portraitUrl,
+						app.regUserPath);
+			}
+
+			String userDriverLicenseUrl = app.getUser()
+					.getDriverLicenseImageUrl();
+			if (userDriverLicenseUrl == null
+					|| userDriverLicenseUrl.equalsIgnoreCase("null")) {
+				mUserDriverLicenseIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																				// 更新默认图片
+
+			} else {
+				mDownloadDriverLicenseImageTask = new DownloadDriverLicenseImageTask();
+				mDownloadDriverLicenseImageTask.execute(userDriverLicenseUrl,
+						app.regUserPath);
+			}
+
+			String userIdentityUrl = app.getUser().getIdentityImageUrl();
+
+			if (userIdentityUrl == null
+					|| userIdentityUrl.equalsIgnoreCase("null")) {
+				Log.d(TAG, " IT IS A NULL.");
+
+				mUserIdentityIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																			// 更新默认图片
+
+			} else {
+				mDownloadUserIdentityImageTask = new DownloadUserIdentityImageTask();
+				mDownloadUserIdentityImageTask.execute(userIdentityUrl,
+						app.regUserPath);
+			}
+		} else {
+			mUserDriverLicenseIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																			// 更新默认图片
+			mUserPortraitIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																		// 更新默认图片
+			mUserIdentityIv.setImageResource(R.drawable.ic_launcher); // TODO:
+																		// 更新默认图片
+		}
+
 	}
-	
+
 	public void initData() {
 		userDownLoadTask = new MyUserDownLoadTask();
 		userDownLoadTask.execute(app.getUser().getId());
 	}
-
-	public void setPortraitImage() {
-
-		if (app.getPortaritBitmap() != null) 
-		{
-			portraitIv.setImageDrawable(new BitmapDrawable(
-					app.getPortaritBitmap()));
-		}
-	}	
 
 	private class MyUserDownLoadTask extends AsyncTask<Long, Integer, Integer> {
 		@Override
@@ -120,8 +161,7 @@ public class PersonalActivity extends BaseActivity {
 			}
 
 			if (result == CellSiteConstants.RESULT_SUC) {
-				 initViewData();
-				setPortraitImage();
+				initViewData();
 			}
 		}
 
@@ -152,36 +192,48 @@ public class PersonalActivity extends BaseActivity {
 	}
 
 	public void parseJson(JSONObject jsonResult) {
+		JSONObject profileJson = null;
 		try {
-			JSONObject profileJson = jsonResult
-					.getJSONObject(CellSiteConstants.PROFILE);
+			try {
+				profileJson = jsonResult
+						.getJSONObject(CellSiteConstants.PROFILE);
+			} catch (Exception e) {
+				profileJson = null;
+			}
 			JSONObject userJson = jsonResult
 					.getJSONObject(CellSiteConstants.USER);
+			if (profileJson != null) {
+				if (profileJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != JSONObject.NULL) {
+					Log.d(TAG, "get the image url");
+					app.getUser()
+							.setProfileImageUrl(
+									profileJson
+											.getString(CellSiteConstants.PROFILE_IMAGE_URL));
 
-			if (profileJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != JSONObject.NULL) {
-				Log.d(TAG, "get the image url");
-				app.getUser()
-						.setProfileImageUrl(
-								profileJson
-										.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+				}
+				if (profileJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != JSONObject.NULL) {
+					app.getUser()
+							.setDriverLicenseImageUrl(
+									profileJson
+											.getString(CellSiteConstants.DRIVER_LICENSE_URL));
+				}
+				if (profileJson.get(CellSiteConstants.IDENTITY_CARD_IMAGE_URL) != JSONObject.NULL) {
+					app.getUser()
+							.setIdentityImageUrl(
+									profileJson
+											.getString(CellSiteConstants.IDENTITY_CARD_IMAGE_URL));
+				}
 
-			}
-			if (profileJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != JSONObject.NULL) {
-				app.getUser()
-						.setDriverLicenseImageUrl(
-								profileJson
-										.getString(CellSiteConstants.DRIVER_LICENSE_URL));
-			}
+				if (profileJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
+					app.getUser().setName(
+							profileJson.getString(CellSiteConstants.NAME));
+				}
 
-			if (profileJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
-				app.getUser().setName(
-						profileJson.getString(CellSiteConstants.NAME));
 			}
 			if (userJson.get(CellSiteConstants.MOBILE) != JSONObject.NULL) {
 				app.getUser().setMobileNum(
 						userJson.getString(CellSiteConstants.MOBILE));
 			}
-
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -200,10 +252,10 @@ public class PersonalActivity extends BaseActivity {
 					public void onClick(DialogInterface dialog, int id) {
 						switch (id) {
 						case 0:
-							startToCameraActivity();
+							startToCameraActivity(CellSiteConstants.TAKE_USER_PORTRAIT);
 							break;
 						case 1:
-							startToMediaActivity();
+							startToMediaActivity(CellSiteConstants.PICK_USER_PORTRAIT);
 							break;
 						}
 					}
@@ -211,19 +263,66 @@ public class PersonalActivity extends BaseActivity {
 				});
 		AlertDialog alert = builder.create();
 		alert.show();
+	}
 
+	public void updateDriverLicense(View v) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(res.getString(R.string.choose_portrait));
+		builder.setItems(
+				new String[] { res.getString(R.string.getPhotoFromCamera),
+						res.getString(R.string.getPhotoFromMemory) },
+				new DialogInterface.OnClickListener() {
+					// @Override
+					public void onClick(DialogInterface dialog, int id) {
+						switch (id) {
+						case 0:
+							startToCameraActivity(CellSiteConstants.TAKE_DRIVER_LICENSE);
+							break;
+						case 1:
+							startToMediaActivity(CellSiteConstants.PICK_DRIVER_LICENSE);
+							break;
+						}
+					}
+
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	public void updateIdentityImage(View v) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(res.getString(R.string.choose_portrait));
+		builder.setItems(
+				new String[] { res.getString(R.string.getPhotoFromCamera),
+						res.getString(R.string.getPhotoFromMemory) },
+				new DialogInterface.OnClickListener() {
+					// @Override
+					public void onClick(DialogInterface dialog, int id) {
+						switch (id) {
+						case 0:
+							startToCameraActivity(CellSiteConstants.TAKE_IDENTITY);
+							break;
+						case 1:
+							startToMediaActivity(CellSiteConstants.PICK_IDENTITY);
+							break;
+						}
+					}
+
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if (requestCode == CellSiteConstants.TAKE_PICTURE
-				|| requestCode == CellSiteConstants.PICK_PICTURE) {
+		if (requestCode == CellSiteConstants.TAKE_USER_PORTRAIT
+				|| requestCode == CellSiteConstants.PICK_USER_PORTRAIT) {
 			Uri uri = null;
-			if (requestCode == CellSiteConstants.TAKE_PICTURE) {
+			if (requestCode == CellSiteConstants.TAKE_USER_PORTRAIT) {
 				uri = imageUri;
 
-			} else if (requestCode == CellSiteConstants.PICK_PICTURE) {
+			} else if (requestCode == CellSiteConstants.PICK_USER_PORTRAIT) {
 				uri = data.getData();
 
 			}
@@ -253,8 +352,8 @@ public class PersonalActivity extends BaseActivity {
 				if (srcFile.exists()) {
 					try {
 						Utils.copyFile(srcFile, tmpFile);
-						app.getUser().getMyTruck()
-								.setLicenseImageUrl(tmpFile.getAbsolutePath());
+						app.getUser().setProfileImageUrl(
+								tmpFile.getAbsolutePath());
 					} catch (Exception e) {
 						Toast.makeText(this, R.string.create_tmp_file_fail,
 								Toast.LENGTH_SHORT).show();
@@ -282,7 +381,7 @@ public class PersonalActivity extends BaseActivity {
 				Bitmap photo = extras.getParcelable("data");
 
 				app.setPortaritBitmap(photo);
-				portraitIv.setImageBitmap(photo);
+				mUserPortraitIv.setImageBitmap(photo);
 				mUpdateImageTask = new UpdateImageTask();
 				mUpdateImageTask.execute("" + app.getUser().getId(),
 						Utils.bitmap2String(photo),
@@ -290,6 +389,142 @@ public class PersonalActivity extends BaseActivity {
 
 				isPortraitChanged = true;
 			}
+		} else if (requestCode == CellSiteConstants.TAKE_IDENTITY
+				|| requestCode == CellSiteConstants.PICK_IDENTITY) {
+
+			Uri uri = null;
+			if (requestCode == CellSiteConstants.TAKE_IDENTITY) {
+				uri = imageUri;
+
+			} else if (requestCode == CellSiteConstants.PICK_IDENTITY) {
+				uri = data.getData();
+
+			}
+
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getContentResolver().query(uri, filePathColumn,
+					null, null, null);
+			if (cursor != null && cursor.moveToFirst()) {
+				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+				String filePath = cursor.getString(columnIndex);
+				cursor.close();
+				Log.d(TAG, "filePath =" + filePath);
+				Log.d(TAG, "uri=" + uri.toString());
+				imageUri = Uri.fromFile(new File(filePath));
+			} else //
+			{
+				if (!Environment.getExternalStorageState().equals(
+						Environment.MEDIA_MOUNTED)) {
+					Toast.makeText(this, R.string.sdcard_occupied,
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+						.format(new Date());
+				File tmpFile = new File(app.regUserPath + File.separator
+						+ "IMG_" + timeStamp + ".jpg");
+				File srcFile = new File(uri.getPath());
+				if (srcFile.exists()) {
+					try {
+						Utils.copyFile(srcFile, tmpFile);
+						app.getUser().setIdentityImageUrl(
+								tmpFile.getAbsolutePath());
+					} catch (Exception e) {
+						Toast.makeText(this, R.string.create_tmp_file_fail,
+								Toast.LENGTH_SHORT).show();
+						return;
+					}
+				} else {
+					Log.d(TAG, "Logic error, should not come to here");
+					Toast.makeText(this, R.string.file_not_found,
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				imageUri = Uri.fromFile(tmpFile);
+			}
+
+			Bitmap tmpBmp = BitmapFactory.decodeFile(imageUri.getPath(), null);
+			Bitmap scaledBmp = Bitmap.createScaledBitmap(tmpBmp,
+					CellSiteConstants.IDENTITY_IMAGE_WIDTH,
+					CellSiteConstants.IDENTITY_IMAGE_HEIGHT, false);
+
+			mUserIdentityIv.setImageBitmap(scaledBmp);
+			// s isChanged = true;
+			mUpdateImageTask = new UpdateImageTask();
+			mUpdateImageTask.execute("" + app.getUser().getId(),
+					Utils.bitmap2String(scaledBmp),
+					CellSiteConstants.UPDATE_USER_IDENTITY_URL);
+
+		} else if (requestCode == CellSiteConstants.TAKE_DRIVER_LICENSE
+				|| requestCode == CellSiteConstants.PICK_DRIVER_LICENSE) {
+
+			Uri uri = null;
+			if (requestCode == CellSiteConstants.TAKE_DRIVER_LICENSE) {
+				uri = imageUri;
+
+			} else if (requestCode == CellSiteConstants.PICK_DRIVER_LICENSE) {
+				uri = data.getData();
+
+			}
+
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getContentResolver().query(uri, filePathColumn,
+					null, null, null);
+			if (cursor != null && cursor.moveToFirst()) {
+				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+				String filePath = cursor.getString(columnIndex);
+				cursor.close();
+				Log.d(TAG, "filePath =" + filePath);
+				Log.d(TAG, "uri=" + uri.toString());
+				imageUri = Uri.fromFile(new File(filePath));
+			} else //
+			{
+				if (!Environment.getExternalStorageState().equals(
+						Environment.MEDIA_MOUNTED)) {
+					Toast.makeText(this, R.string.sdcard_occupied,
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+						.format(new Date());
+				File tmpFile = new File(app.regUserPath + File.separator
+						+ "IMG_" + timeStamp + ".jpg");
+				File srcFile = new File(uri.getPath());
+				if (srcFile.exists()) {
+					try {
+						Utils.copyFile(srcFile, tmpFile);
+						app.getUser().setDriverLicenseImageUrl(
+								tmpFile.getAbsolutePath());
+					} catch (Exception e) {
+						Toast.makeText(this, R.string.create_tmp_file_fail,
+								Toast.LENGTH_SHORT).show();
+						return;
+					}
+				} else {
+					Log.d(TAG, "Logic error, should not come to here");
+					Toast.makeText(this, R.string.file_not_found,
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				imageUri = Uri.fromFile(tmpFile);
+			}
+
+			Bitmap tmpBmp = BitmapFactory.decodeFile(imageUri.getPath(), null);
+			Bitmap scaledBmp = Bitmap.createScaledBitmap(tmpBmp,
+					CellSiteConstants.IDENTITY_IMAGE_WIDTH,
+					CellSiteConstants.IDENTITY_IMAGE_HEIGHT, false);
+
+			mUserDriverLicenseIv.setImageBitmap(scaledBmp);
+			// s isChanged = true;
+			mUpdateImageTask = new UpdateImageTask();
+			mUpdateImageTask.execute("" + app.getUser().getId(),
+					Utils.bitmap2String(scaledBmp),
+					CellSiteConstants.UPDATE_DRIVER_LICENSE_URL);
+
 		}
 	}
 
@@ -312,7 +547,7 @@ public class PersonalActivity extends BaseActivity {
 					CellSiteConstants.IMAGE_WIDTH,
 					CellSiteConstants.IMAGE_HEIGHT, false));
 
-			portraitIv.setImageBitmap(app.getPortaritBitmap());
+			mUserPortraitIv.setImageBitmap(app.getPortaritBitmap());
 			isPortraitChanged = true;
 
 			Log.d(TAG, "set bitmap");
@@ -392,7 +627,7 @@ public class PersonalActivity extends BaseActivity {
 	/**
 	 * start to take picture
 	 */
-	private void startToCameraActivity() {
+	private void startToCameraActivity(int requestId) {
 		Intent localIntent = new Intent("android.media.action.IMAGE_CAPTURE");
 
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
@@ -404,17 +639,17 @@ public class PersonalActivity extends BaseActivity {
 
 		// isCameraCapture = true;
 
-		startActivityForResult(localIntent, CellSiteConstants.TAKE_PICTURE);
+		startActivityForResult(localIntent, requestId);
 	}
 
 	/**
 	 * start to choose pictue
 	 */
-	private void startToMediaActivity() {
+	private void startToMediaActivity(int requestId) {
 		Intent localIntent = new Intent("android.intent.action.PICK");
 		Uri localUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 		localIntent.setDataAndType(localUri, "image/*");
-		startActivityForResult(localIntent, CellSiteConstants.PICK_PICTURE);
+		startActivityForResult(localIntent, requestId);
 	}
 
 	private class UpdateImageTask extends AsyncTask<String, String, Integer> {
@@ -466,16 +701,92 @@ public class PersonalActivity extends BaseActivity {
 			return CellSiteConstants.UNKNOWN_ERROR;
 		}
 	}
-	
-	
+
 	/**
 	 * 跳转到ChangeNameActivity去修改名字
 	 */
 	public void changeName(View v) {
 		Intent intent = new Intent(PersonalActivity.this,
 				ChangeNameActivity.class);
+		intent.putExtra(CellSiteConstants.NAME, nameTv.getText().toString()
+				.trim());
 		startActivity(intent);
 
+	}
+
+	class DownloadDriverLicenseImageTask extends
+			AsyncTask<String, Integer, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Log.d(TAG, "URL=" + (String) params[0]);
+			mDriverLicenseImage = app.downloadBmpByUrl((String) params[0],
+					params[1]);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+
+			super.onPostExecute(result);
+			if (!this.isCancelled()) {
+				if (mDriverLicenseImage != null) {
+					mUserDriverLicenseIv.setImageDrawable(new BitmapDrawable(
+							mDriverLicenseImage));
+					// TODO
+				}
+			}
+		}
+	}
+
+	class DownloadUserPortraitImageTask extends
+			AsyncTask<String, Integer, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Log.d(TAG, "URL=" + (String) params[0]);
+			mUserPortraitImage = app.downloadBmpByUrl((String) params[0],
+					params[1]);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+
+			super.onPostExecute(result);
+			if (!this.isCancelled()) {
+				if (mUserPortraitImage != null) {
+					mUserPortraitIv.setImageDrawable(new BitmapDrawable(
+							mUserPortraitImage));
+					// TODO
+				}
+			}
+		}
+	}
+
+	class DownloadUserIdentityImageTask extends
+			AsyncTask<String, Integer, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Log.d(TAG, "URL=" + (String) params[0]);
+			mIdentityImage = app
+					.downloadBmpByUrl((String) params[0], params[1]);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+
+			super.onPostExecute(result);
+			if (!this.isCancelled()) {
+				if (mIdentityImage != null) {
+					mUserIdentityIv.setImageDrawable(new BitmapDrawable(
+							mIdentityImage));
+					// TODO
+				}
+			}
+		}
 	}
 
 }

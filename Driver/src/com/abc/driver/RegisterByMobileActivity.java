@@ -200,6 +200,8 @@ public class RegisterByMobileActivity extends Activity {
 				User user = new User();
 				user.setId(response.getLong(CellSiteConstants.USER_ID));
 
+				user.setMobileNum(_mobile);
+
 				app.attachUser(user);
 
 				// store the username and password in sharedPreference

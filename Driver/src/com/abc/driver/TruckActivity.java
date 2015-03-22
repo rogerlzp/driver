@@ -47,7 +47,7 @@ public class TruckActivity extends BaseActivity {
 
 	private static final String TAG = "TruckActivity";
 
-	Bitmap protraitBmp;
+	Bitmap trcukLicenseBmp, truckPhotoBmp;
 
 	ArrayList<HashMap<String, Object>> mTruckLengthList = new ArrayList<HashMap<String, Object>>();
 	ArrayList<HashMap<String, Object>> mTruckTypeList = new ArrayList<HashMap<String, Object>>();
@@ -56,6 +56,8 @@ public class TruckActivity extends BaseActivity {
 	private TextView mTLtv;
 	private TextView mTWtv;
 	private ImageView mTLPiv; // 驾照
+	private ImageView mTPiv; // 车子照片
+	private TextView mTMtv;
 
 	public String mTruckType;
 	public String mTruckLength;
@@ -70,6 +72,7 @@ public class TruckActivity extends BaseActivity {
 	private UpdateTruckTask mUpdateTruckTask;
 	private UpdateImageTask mUpdateImageTask;
 	private DownloadImageTask mDownloadImageTask;
+	private DownloadTruckPhotoImageTask mDownloadTruckPhotoImageTask;
 	Boolean isPortraitChanged = false;
 
 	@Override
@@ -80,55 +83,104 @@ public class TruckActivity extends BaseActivity {
 		initView();
 		initData();
 
+		Intent intent = getIntent();
+		String newMobile = intent
+				.getStringExtra(CellSiteConstants.TRUCK_MOBILE_NUM);
+		if (newMobile != null) {
+			app.getUser().getMyTruck().setMobileNum(newMobile);
+		}
+		Log.d(TAG, "newMobile = " + newMobile);
+
 	}
 
 	public void initView() {
 		mTTtv = (TextView) this.findViewById(R.id.truck_type_tv);
 		mTLtv = (TextView) this.findViewById(R.id.truck_length_tv);
 		mTWtv = (TextView) this.findViewById(R.id.truck_weight_tv);
-		mTLPiv = (ImageView) this.findViewById(R.id.truck_license_tv);
-		
-		mTLtv.setText(CellSiteConstants.TruckLengths[app.getUser().getMyTruck().getLengthId()]);
-		mTLtv.setText(CellSiteConstants.TruckTypes[app.getUser().getMyTruck().getTypeId()]);
-		
+		mTLPiv = (ImageView) this.findViewById(R.id.truck_license_iv);
+		mTPiv = (ImageView) this.findViewById(R.id.truck_photo_iv);
+		mTMtv = (TextView) this.findViewById(R.id.mobile_contact_tv);
+
+		if (null != app.getUser().getMyTruck()) {
+			mTLtv.setText(CellSiteConstants.TruckLengths[app.getUser()
+					.getMyTruck().getLengthId()]);
+			mTTtv.setText(CellSiteConstants.TruckTypes[app.getUser()
+					.getMyTruck().getTypeId()]);
+			// mTWtv.setText(app.getUser().getMyTruck().getWeightId());
+			Log.d(TAG, "" + app.getUser().getMyTruck().getMobileNum());
+			if (app.getUser().getMyTruck().getMobileNum() == null) {
+				mTMtv.setText(app.getUser().getMobileNum());
+				app.getUser().getMyTruck()
+						.setMobileNum(app.getUser().getMobileNum());
+
+			} else {
+				mTMtv.setText(app.getUser().getMyTruck().getMobileNum());
+			}
+		}
+
 		setLicenseImage();
-		
+		setPhotoImage();
+		Log.d(TAG, "init complements");
+
 	}
-	
+
 	public void setLicenseImage() {
+		if (null != app.getUser().getMyTruck()) {
+			String truckLicenseUrl = app.getUser().getMyTruck()
+					.getLicenseImageUrl();
 
-		String truckLicenseUrl = app.getUser().getMyTruck().getLicenseImageUrl();
+			if (truckLicenseUrl == null
+					|| truckLicenseUrl.equalsIgnoreCase("null")) {
+				Log.d(TAG, " IT IS A NULL.");
 
-		if (truckLicenseUrl == null
-				|| truckLicenseUrl.equalsIgnoreCase("null")) {
-			Log.d(TAG, " IT IS A NULL.");
-			
-			mTLPiv.setImageResource(R.drawable.ic_launcher);  //TODO: 更新默认图片
-			
+				mTLPiv.setImageResource(R.drawable.ic_launcher); // TODO: 更新默认图片
+
+			} else {
+				mDownloadImageTask = new DownloadImageTask();
+				mDownloadImageTask.execute(truckLicenseUrl, app.regUserPath);
+			}
 		} else {
-			mDownloadImageTask = new DownloadImageTask();
-			mDownloadImageTask.execute(truckLicenseUrl,
-					app.regUserPath);
+			mTPiv.setImageResource(R.drawable.ic_launcher); // TODO: 更新默认图片
+		}
+	}
+
+	public void setPhotoImage() {
+		if (null != app.getUser().getMyTruck()) {
+			String photoImageUrl = app.getUser().getMyTruck()
+					.getPhotoImageUrl();
+
+			if (photoImageUrl == null || photoImageUrl.equalsIgnoreCase("null")) {
+				Log.d(TAG, " IT IS A NULL.");
+
+				mTPiv.setImageResource(R.drawable.ic_launcher); // TODO: 更新默认图片
+
+			} else {
+				mDownloadTruckPhotoImageTask = new DownloadTruckPhotoImageTask();
+				mDownloadTruckPhotoImageTask.execute(photoImageUrl,
+						app.regUserPath);
+			}
+		} else {
+			mTPiv.setImageResource(R.drawable.ic_launcher); // TODO: 更新默认图片
 		}
 	}
 
 	public void initData() {
-          
+
 		for (int i = 0; i < 14; i++) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("PIC", R.drawable.ic_launcher);
 			map.put("TITLE", CellSiteConstants.TruckTypes[i]);
-			map.put("TTYPE", i+1);
+			map.put("TTYPE", i + 1);
 			mTruckTypeList.add(map);
 		}
-		
+
 		for (int i = 0; i < 17; i++) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("TITLE", CellSiteConstants.TruckLengths[i]);
-			map.put("TLENGTH", i+1);
+			map.put("TLENGTH", i + 1);
 			mTruckLengthList.add(map);
 		}
-		
+
 		for (int i = 0; i < 10; i++) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("TITLE", "Test Title");
@@ -261,6 +313,8 @@ public class TruckActivity extends BaseActivity {
 	public void updateMobile(View v) {
 		Intent intent = new Intent(TruckActivity.this,
 				UpdateTruckMobileActivity.class);
+		intent.putExtra(CellSiteConstants.TRUCK_MOBILE_NUM, mTMtv.getText()
+				.toString().trim());
 		startActivity(intent);
 	}
 
@@ -336,7 +390,8 @@ public class TruckActivity extends BaseActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Log.d(TAG, "URL=" + (String) params[0]);
-			protraitBmp = app.downloadBmpByUrl((String) params[0], params[1]);
+			trcukLicenseBmp = app.downloadBmpByUrl((String) params[0],
+					params[1]);
 			return true;
 		}
 
@@ -345,8 +400,31 @@ public class TruckActivity extends BaseActivity {
 
 			super.onPostExecute(result);
 			if (!this.isCancelled()) {
-				if (protraitBmp != null) {
-					mTLPiv.setImageDrawable(new BitmapDrawable(protraitBmp));
+				if (trcukLicenseBmp != null) {
+					mTLPiv.setImageDrawable(new BitmapDrawable(trcukLicenseBmp));
+					// TODO
+				}
+			}
+		}
+	}
+
+	class DownloadTruckPhotoImageTask extends
+			AsyncTask<String, Integer, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Log.d(TAG, "URL=" + (String) params[0]);
+			truckPhotoBmp = app.downloadBmpByUrl((String) params[0], params[1]);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+
+			super.onPostExecute(result);
+			if (!this.isCancelled()) {
+				if (truckPhotoBmp != null) {
+					mTPiv.setImageDrawable(new BitmapDrawable(truckPhotoBmp));
 					// TODO
 				}
 			}
@@ -369,10 +447,40 @@ public class TruckActivity extends BaseActivity {
 					public void onClick(DialogInterface dialog, int id) {
 						switch (id) {
 						case 0:
-							startToCameraActivity();
+							startToCameraActivity(CellSiteConstants.TAKE_PICTURE);
 							break;
 						case 1:
-							startToMediaActivity();
+							startToMediaActivity(CellSiteConstants.PICK_PICTURE);
+							break;
+						}
+					}
+
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
+
+	}
+
+	/**
+	 * edit portait
+	 * 
+	 * @param v
+	 */
+	public void editPhotoImage(View v) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(res.getString(R.string.choose_portrait));
+		builder.setItems(
+				new String[] { res.getString(R.string.getPhotoFromCamera),
+						res.getString(R.string.getPhotoFromMemory) },
+				new DialogInterface.OnClickListener() {
+					// @Override
+					public void onClick(DialogInterface dialog, int id) {
+						switch (id) {
+						case 0:
+							startToCameraActivity(CellSiteConstants.TAKE_PICTURE2);
+							break;
+						case 1:
+							startToMediaActivity(CellSiteConstants.PICK_PICTURE2);
 							break;
 						}
 					}
@@ -388,6 +496,7 @@ public class TruckActivity extends BaseActivity {
 
 		if (requestCode == CellSiteConstants.TAKE_PICTURE
 				|| requestCode == CellSiteConstants.PICK_PICTURE) {
+
 			Uri uri = null;
 			if (requestCode == CellSiteConstants.TAKE_PICTURE) {
 				uri = imageUri;
@@ -407,7 +516,7 @@ public class TruckActivity extends BaseActivity {
 				Log.d(TAG, "filePath =" + filePath);
 				Log.d(TAG, "uri=" + uri.toString());
 				imageUri = Uri.fromFile(new File(filePath));
-			} else // This is a bug, in some cases, some images like
+			} else //
 			{
 				if (!Environment.getExternalStorageState().equals(
 						Environment.MEDIA_MOUNTED)) {
@@ -424,7 +533,8 @@ public class TruckActivity extends BaseActivity {
 				if (srcFile.exists()) {
 					try {
 						Utils.copyFile(srcFile, tmpFile);
-						app.getUser().getMyTruck().setLicenseImageUrl(tmpFile.getAbsolutePath());
+						app.getUser().getMyTruck()
+								.setLicenseImageUrl(tmpFile.getAbsolutePath());
 					} catch (Exception e) {
 						Toast.makeText(this, R.string.create_tmp_file_fail,
 								Toast.LENGTH_SHORT).show();
@@ -440,8 +550,20 @@ public class TruckActivity extends BaseActivity {
 				imageUri = Uri.fromFile(tmpFile);
 			}
 
-			doCrop();
+			// doCrop();
+
+			Bitmap tmpBmp = BitmapFactory.decodeFile(imageUri.getPath(), null);
+			Bitmap scaledBmp = Bitmap.createScaledBitmap(tmpBmp, IMAGE_WIDTH,
+					IMAGE_HEIGHT, false);
+
+			mTLPiv.setImageBitmap(scaledBmp);
+			isPortraitChanged = true;
 			Log.d(TAG, "onActivityResult PICK_PICTURE");
+			mUpdateImageTask = new UpdateImageTask();
+			mUpdateImageTask.execute("" + app.getUser().getId(), ""
+					+ app.getUser().getMyTruck().getTruckId(),
+					Utils.bitmap2String(scaledBmp),
+					CellSiteConstants.UPDATE_TRUCK_LICENSE_URL);
 
 		} else if (requestCode == CellSiteConstants.CROP_PICTURE) {
 			Log.d(TAG, "crop picture");
@@ -451,15 +573,95 @@ public class TruckActivity extends BaseActivity {
 				Bundle extras = data.getExtras();
 				Bitmap photo = extras.getParcelable("data");
 
-				protraitBmp = photo;
-				mTLPiv.setImageBitmap(protraitBmp);
+				trcukLicenseBmp = photo;
+				mTLPiv.setImageBitmap(trcukLicenseBmp);
 				mUpdateImageTask = new UpdateImageTask();
 				mUpdateImageTask.execute("" + app.getUser().getId(), ""
 						+ app.getUser().getMyTruck().getTruckId(),
-						Utils.bitmap2String(protraitBmp),
+						Utils.bitmap2String(trcukLicenseBmp),
 						CellSiteConstants.UPDATE_DRIVER_LICENSE_URL);
 
 				isPortraitChanged = true;
+			}
+		} else if (requestCode == CellSiteConstants.TAKE_PICTURE2
+				|| requestCode == CellSiteConstants.PICK_PICTURE2) {
+
+			Uri uri = null;
+			if (requestCode == CellSiteConstants.TAKE_PICTURE2) {
+				uri = imageUri;
+
+			} else if (requestCode == CellSiteConstants.PICK_PICTURE2) {
+				uri = data.getData();
+
+			}
+
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getContentResolver().query(uri, filePathColumn,
+					null, null, null);
+			if (cursor != null && cursor.moveToFirst()) {
+				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+				String filePath = cursor.getString(columnIndex);
+				cursor.close();
+				Log.d(TAG, "filePath =" + filePath);
+				Log.d(TAG, "uri=" + uri.toString());
+				imageUri = Uri.fromFile(new File(filePath));
+			} else //
+			{
+				if (!Environment.getExternalStorageState().equals(
+						Environment.MEDIA_MOUNTED)) {
+					Toast.makeText(this, R.string.sdcard_occupied,
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+						.format(new Date());
+				File tmpFile = new File(app.regUserPath + File.separator
+						+ "IMG_" + timeStamp + ".jpg");
+				File srcFile = new File(uri.getPath());
+				if (srcFile.exists()) {
+					try {
+						Utils.copyFile(srcFile, tmpFile);
+						app.getUser().getMyTruck()
+								.setPhotoImageUrl(tmpFile.getAbsolutePath());
+					} catch (Exception e) {
+						Toast.makeText(this, R.string.create_tmp_file_fail,
+								Toast.LENGTH_SHORT).show();
+						return;
+					}
+				} else {
+					Log.d(TAG, "Logic error, should not come to here");
+					Toast.makeText(this, R.string.file_not_found,
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				imageUri = Uri.fromFile(tmpFile);
+			}
+
+			// doCrop();
+
+			Bitmap tmpBmp = BitmapFactory.decodeFile(imageUri.getPath(), null);
+			Bitmap scaledBmp = Bitmap.createScaledBitmap(tmpBmp, IMAGE_WIDTH,
+					IMAGE_HEIGHT, false);
+
+			mTPiv.setImageBitmap(scaledBmp);
+			// s isChanged = true;
+			mUpdateImageTask = new UpdateImageTask();
+			mUpdateImageTask.execute("" + app.getUser().getId(), ""
+					+ app.getUser().getMyTruck().getTruckId(),
+					Utils.bitmap2String(scaledBmp),
+					CellSiteConstants.UPDATE_TRUCK_PHOTO_URL);
+
+		} else if (requestCode == CellSiteConstants.UPDATE_TRUCK_MOBILE_REQUSET) {
+			Log.d(TAG, "mobile changed");
+			if (app.getUser().getMyTruck().getMobileNum() == null) {
+				mTMtv.setText(app.getUser().getMobileNum());
+				app.getUser().getMyTruck()
+						.setMobileNum(app.getUser().getMobileNum());
+
+			} else {
+				mTMtv.setText(app.getUser().getMyTruck().getMobileNum());
 			}
 		}
 	}
@@ -479,10 +681,10 @@ public class TruckActivity extends BaseActivity {
 		if (size == 0) {
 			Log.d(TAG, " Crop activity is not found.  List size is zero.");
 			Bitmap tmpBmp = BitmapFactory.decodeFile(imageUri.getPath(), null);
-			protraitBmp = Bitmap.createScaledBitmap(tmpBmp, IMAGE_WIDTH,
+			trcukLicenseBmp = Bitmap.createScaledBitmap(tmpBmp, IMAGE_WIDTH,
 					IMAGE_HEIGHT, false);
 
-			mTLPiv.setImageBitmap(protraitBmp);
+			mTLPiv.setImageBitmap(trcukLicenseBmp);
 			isPortraitChanged = true;
 
 			Log.d(TAG, "set bitmap");
@@ -562,7 +764,7 @@ public class TruckActivity extends BaseActivity {
 	/**
 	 * start to take picture
 	 */
-	private void startToCameraActivity() {
+	private void startToCameraActivity(int actionId) {
 		Intent localIntent = new Intent("android.media.action.IMAGE_CAPTURE");
 
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
@@ -574,17 +776,18 @@ public class TruckActivity extends BaseActivity {
 
 		// isCameraCapture = true;
 
-		startActivityForResult(localIntent, CellSiteConstants.TAKE_PICTURE);
+		startActivityForResult(localIntent, actionId);
 	}
 
 	/**
 	 * start to choose pictue
 	 */
-	private void startToMediaActivity() {
+	private void startToMediaActivity(int actionId) {
 		Intent localIntent = new Intent("android.intent.action.PICK");
 		Uri localUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 		localIntent.setDataAndType(localUri, "image/*");
-		startActivityForResult(localIntent, CellSiteConstants.PICK_PICTURE);
+
+		startActivityForResult(localIntent, actionId);
 	}
 
 	private class UpdateImageTask extends AsyncTask<String, String, Integer> {
@@ -637,6 +840,22 @@ public class TruckActivity extends BaseActivity {
 			}
 			return CellSiteConstants.UNKNOWN_ERROR;
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d(TAG, app.getUser().getMyTruck().getMobileNum());
+		if (app.getUser().getMyTruck().getMobileNum() == null) {
+			mTMtv.setText(app.getUser().getMobileNum());
+			app.getUser().getMyTruck()
+					.setMobileNum(app.getUser().getMobileNum());
+
+		} else {
+			mTMtv.setText(app.getUser().getMyTruck().getMobileNum());
+		}
+
+		Log.d(TAG, "return to resume");
 	}
 
 }
