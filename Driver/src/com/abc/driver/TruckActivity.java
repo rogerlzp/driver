@@ -528,7 +528,7 @@ public class TruckActivity extends BaseActivity {
 				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 						.format(new Date());
 				File tmpFile = new File(app.regUserPath + File.separator
-						+ "IMG_" + timeStamp + ".jpg");
+						+ "IMG_" + timeStamp + ".png");
 				File srcFile = new File(uri.getPath());
 				if (srcFile.exists()) {
 					try {
@@ -617,7 +617,7 @@ public class TruckActivity extends BaseActivity {
 				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 						.format(new Date());
 				File tmpFile = new File(app.regUserPath + File.separator
-						+ "IMG_" + timeStamp + ".jpg");
+						+ "IMG_" + timeStamp + ".png");
 				File srcFile = new File(uri.getPath());
 				if (srcFile.exists()) {
 					try {
