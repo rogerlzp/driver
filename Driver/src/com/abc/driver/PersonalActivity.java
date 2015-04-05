@@ -788,5 +788,12 @@ public class PersonalActivity extends BaseActivity {
 			}
 		}
 	}
+	
+	@Override
+	public void onBackPressed() {
+			finish();
+		
+	}
+
 
 }

@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.abc.driver.net.CellSiteHttpClient;
 import com.abc.driver.utility.CellSiteConstants;
@@ -103,6 +104,13 @@ public class ChangeNameActivity extends BaseActivity {
 			}
 			return CellSiteConstants.UNKNOWN_ERROR;
 		}
+	}
+	
+	
+	@Override
+	public void onBackPressed() {
+			finish();
+		
 	}
 
 }

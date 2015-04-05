@@ -41,7 +41,14 @@
             android:textColor="#ffffff"
             android:textSize="20sp" />
     </RelativeLayout>
-
+    
+      <TextView
+            android:id="@+id/horder_id_tv"
+            android:layout_width="220dp"
+            android:visibility="gone"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp" />
 
     <RelativeLayout
         android:id="@+id/shipper_address"
@@ -49,12 +56,10 @@
         android:layout_height="45dp"
         android:gravity="center_vertical" >
 
-        <Button
-            android:id="@+id/shipper_address_btn"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:onClick="chooseAddress"
             android:text="@string/shipper_address" />
 
         <TextView
@@ -62,10 +67,7 @@
             android:layout_width="220dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:clickable="true"
-            android:onClick="chooseAddress"
-            android:text="测试" />
+            android:layout_marginRight="20dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -74,11 +76,9 @@
         android:layout_height="45dp"
         android:gravity="center_vertical" >
 
-        <Button
-            android:id="@+id/consignee_address_btn"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="chooseAddress"
             android:text="@string/consignee_address" />
 
         <TextView
@@ -86,10 +86,7 @@
             android:layout_width="220dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:clickable="true"
-            android:onClick="chooseAddress"
-            android:text="测试" />
+            android:layout_marginRight="20dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -98,11 +95,9 @@
         android:layout_height="45dp"
         android:gravity="center_vertical" >
 
-        <Button
-            android:id="@+id/shipper_date_btn"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="chooseDate"
             android:text="@string/shipper_date" />
 
         <TextView
@@ -110,26 +105,62 @@
             android:layout_width="220dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:clickable="true"
-            android:onClick="chooseDate"
-            android:text="测试" />
+            android:layout_marginRight="20dp" />
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/cargo_detail"
+        android:id="@+id/cargo_type"
         android:layout_width="fill_parent"
         android:layout_height="45dp"
         android:gravity="center_vertical" >
 
-        <Button
-            android:id="@+id/cargo_type_btn"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cargo_detail" />
+            android:text="@string/cargo_type" />
 
         <TextView
             android:id="@+id/cargo_type_tv"
+            android:layout_width="220dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:text="@string/cargo_detail" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/cargo_weight_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cargo_weight" />
+
+        <TextView
+            android:id="@+id/cargo_weight_tv"
+            android:layout_width="220dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:text="@string/cargo_detail" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/cargo_volume_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cargo_volume" />
+
+        <TextView
+            android:id="@+id/cargo_volume_tv"
             android:layout_width="220dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
@@ -143,8 +174,7 @@
         android:layout_height="45dp"
         android:gravity="center_vertical" >
 
-        <Button
-            android:id="@+id/truck_type_btn"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/truck_detail" />
@@ -159,18 +189,17 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/horder_description"
         android:layout_width="fill_parent"
         android:layout_height="45dp"
         android:gravity="center_vertical" >
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/horder_desc" />
 
         <TextView
-            android:id="@+id/horder_description_et"
+            android:id="@+id/horder_desc_tv"
             android:layout_width="220dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"

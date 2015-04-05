@@ -159,4 +159,9 @@
 
     <!-- PULL_TO_REFRESH_listview end -->
 
+
+    <!-- Truck plan -->
+    <string name="createTruckplan">创建行车计划</string>
+    <string name="note">备注</string>
+
 </resources>
