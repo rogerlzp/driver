@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -43,6 +44,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -51,8 +53,10 @@ import com.abc.driver.CityDialog.InputListener;
 import com.abc.driver.net.CellSiteHttpClient;
 import com.abc.driver.utility.CellSiteConstants;
 import com.abc.driver.utility.CityDBReader;
-import com.abc.driver.view.PullToRefreshListView;
-import com.abc.driver.view.PullToRefreshListView.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class MainActivity extends BaseActivity {
 
@@ -140,7 +144,7 @@ public class MainActivity extends BaseActivity {
 				if (mHorderTypes[mCurrRadioIdx].hasShowAllHorders) {
 					mMoreTv.setText(R.string.hasShowAll);
 				} else {
-					mLvHistoryPos = mHorderLv.getFirstVisiblePosition();
+					// mLvHistoryPos = mHorderLv.getFirstVisiblePosition();
 					mHorderDownLoadTask = new HorderDownLoadTask();
 					mHorderDownLoadTask
 							.execute(CellSiteConstants.MORE_OPERATION);
@@ -164,7 +168,6 @@ public class MainActivity extends BaseActivity {
 	// h货单
 	PullToRefreshListView mFHorderLv;
 	HorderType mFHorderTypes = new HorderType(0);
-	// static final int PAGE_COUNT = 2; // 每页多少个horder
 	ViewGroup mFHorderMore;
 	TextView mFHolderMoreTv;
 	boolean isForceRefreshFH = false;
@@ -187,7 +190,7 @@ public class MainActivity extends BaseActivity {
 				if (mFHorderTypes.hasShowAllHorders) {
 					mFHolderMoreTv.setText(R.string.hasShowAll);
 				} else {
-					mLvHistoryPosFH = mFHorderLv.getFirstVisiblePosition();
+					// mLvHistoryPosFH = mFHorderLv.getFirstVisiblePosition();
 					mFHorderDownLoadTask = new FHorderDownLoadTask();
 					mFHorderDownLoadTask
 							.execute(CellSiteConstants.MORE_OPERATION);
@@ -241,6 +244,7 @@ public class MainActivity extends BaseActivity {
 
 	public void initFHorders() {
 		mFHorderLv = (PullToRefreshListView) findViewById(R.id.huoyun_lv);
+		mFHorderLv.setMode(Mode.BOTH);
 
 		mFHorderMore = (ViewGroup) LayoutInflater.from(MainActivity.this)
 				.inflate(R.layout.more_list, null);
@@ -248,16 +252,40 @@ public class MainActivity extends BaseActivity {
 
 		mFHolderMoreTv = (TextView) mFHorderMore.getChildAt(0);
 
-		mFHorderLv.addFooterView(mFHorderMore);
+		// mFHorderLv.addFooterView(mFHorderMore);
 		mFHorderLv.setOnItemClickListener(mFHorderDetailListener);
 		mFHorderLv.setAdapter(mFHorderTypes.nHorderAdapter);
 		// Set a listener to be invoked when the list should be refreshed.
-		mFHorderLv.setOnRefreshListener(new OnRefreshListener() {
 
-			public void onRefresh() {
-				// TODO Auto-generated method stub
+		mFHorderLv.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+
+			@Override
+			public void onPullDownToRefresh(
+					PullToRefreshBase<ListView> refreshView) {
 				isForceRefreshFH = true;
-				mFHorderTypes = new HorderType(mCurrRadioIdx);
+
+				String label = DateUtils.formatDateTime(
+						getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL);
+				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
+
+				// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
+				mFHorderDownLoadTask = new FHorderDownLoadTask();
+				mFHorderDownLoadTask
+						.execute(CellSiteConstants.NORMAL_OPERATION);
+			}
+
+			@Override
+			public void onPullUpToRefresh(
+					PullToRefreshBase<ListView> refreshView) {
+				isForceRefreshFH = true;
+				// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
+				String label = DateUtils.formatDateTime(
+						getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL);
+				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
 
 				mFHorderDownLoadTask = new FHorderDownLoadTask();
 				mFHorderDownLoadTask
@@ -355,16 +383,39 @@ public class MainActivity extends BaseActivity {
 
 		mMoreTv = (TextView) mPartyMore.getChildAt(0);
 
-		mHorderLv.addFooterView(mPartyMore);
+		// mHorderLv.addFooterView(mPartyMore);
 		mHorderLv.setOnItemClickListener(mHorderDetailListener);
 		mHorderLv.setAdapter(mHorderTypes[mCurrRadioIdx].nHorderAdapter);
 		// Set a listener to be invoked when the list should be refreshed.
-		mHorderLv.setOnRefreshListener(new OnRefreshListener() {
 
-			public void onRefresh() {
-				// TODO Auto-generated method stub
+		mHorderLv.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+
+			@Override
+			public void onPullDownToRefresh(
+					PullToRefreshBase<ListView> refreshView) {
 				isForceRefresh = true;
-				mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
+
+				String label = DateUtils.formatDateTime(
+						getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL);
+				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
+
+				// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
+				mHorderDownLoadTask = new HorderDownLoadTask();
+				mHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
+			}
+
+			@Override
+			public void onPullUpToRefresh(
+					PullToRefreshBase<ListView> refreshView) {
+				isForceRefresh = true;
+				// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
+				String label = DateUtils.formatDateTime(
+						getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL);
+				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
 
 				mHorderDownLoadTask = new HorderDownLoadTask();
 				mHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
@@ -468,6 +519,17 @@ public class MainActivity extends BaseActivity {
 							R.drawable.tab_settings_normal));
 				}
 				initFHorders();
+
+				if (mFHProgressdialog == null || !mFHProgressdialog.isShowing()) {
+					mFHProgressdialog = new ProgressDialog(MainActivity.this);
+					mFHProgressdialog.setMessage("正在加载数据");
+					mFHProgressdialog.setIndeterminate(true);
+					mFHProgressdialog.setCancelable(true);
+					mFHProgressdialog.show();
+				}
+
+				mFHorderDownLoadTask = new FHorderDownLoadTask();
+				mFHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
 				break;
 			case 2:
 				mTab3.setImageDrawable(getResources().getDrawable(
@@ -1256,7 +1318,7 @@ public class MainActivity extends BaseActivity {
 					mMoreTv.setVisibility(View.INVISIBLE);
 				}
 				if (mLvHistoryPos > 0) {
-					mHorderLv.setSelectionFromTop(mLvHistoryPos, 0);
+					// mHorderLv.setSelectionFromTop(mLvHistoryPos, 0);
 					mLvHistoryPos = 0;
 				}
 
@@ -1514,32 +1576,21 @@ public class MainActivity extends BaseActivity {
 
 			try {
 				if (isForceRefreshFH
-						|| moreOperation == CellSiteConstants.MORE_OPERATION) {
-					Log.d(TAG,
-							"Will connect the network and download the parties");
+						|| moreOperation == CellSiteConstants.MORE_OPERATION ||app.getFHorderTypeCache() == null) {
 					getFHorder();
-
 					if (mFHorderTypes.nHorders.size() < mFHorderTypes.nDisplayNum
 							+ CellSiteConstants.PAGE_COUNT
 							&& !mHasExceptionHorder) {
 						mFHorderTypes.hasShowAllHorders = true;
 					}
-					Log.d(TAG, "after download the parties");
 				} else {
-
-					// TODO
-					// mFHorderTypes = app
-					// .getHorderTypeCache(mCurrRadioIdx);
-					Log.d(TAG, "++++++++++++++++Number of My Parties :"
-							+ mFHorderTypes.nHorders.size());
+					 mFHorderTypes = app.getFHorderTypeCache();
 				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
 				return TAG_FAIL;
 			}
-
-			Log.d(TAG, "after download the parties: TAG_SUCC");
 			return TAG_SUCC;
 		}
 
@@ -1550,9 +1601,9 @@ public class MainActivity extends BaseActivity {
 
 			Log.d(TAG, "FHorderDownLoadTask onPostExecute()");
 			if (!this.isCancelled()) {
-				if (mProgressdialog != null) {
+				if (mFHProgressdialog != null) {
 					Log.d(TAG, "Cancel the progress dialog");
-					mProgressdialog.cancel();
+					mFHProgressdialog.cancel();
 				}
 
 				if (isForceRefreshFH) {
@@ -1575,7 +1626,7 @@ public class MainActivity extends BaseActivity {
 
 				mFHorderTypes.nDisplayNum = mFHorderTypes.nHorders.size();
 				// TODO
-				// app.setHorderTypeCache(mFHorderTypes);
+				 app.setFHorderTypeCache(mFHorderTypes);
 
 				if (mFHorderTypes.nDisplayNum > 0) {
 					mFHolderMoreTv.setVisibility(View.VISIBLE);
@@ -1583,7 +1634,7 @@ public class MainActivity extends BaseActivity {
 					mFHolderMoreTv.setVisibility(View.INVISIBLE);
 				}
 				if (mLvHistoryPosFH > 0) {
-					mFHorderLv.setSelectionFromTop(mLvHistoryPosFH, 0);
+					// mFHorderLv.setSelectionFromTop(mLvHistoryPosFH, 0);
 					mLvHistoryPosFH = 0;
 				}
 

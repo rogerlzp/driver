@@ -71,6 +71,8 @@ public class CellSiteApplication extends Application {
 	
 	Bitmap mPortaritBitmap = null;
 
+	// 可供司机接单的horder
+	HorderType gFHorderType = null; 
 	
 	
 	public Bitmap getPortaritBitmap() {
@@ -404,6 +406,16 @@ public class CellSiteApplication extends Application {
 		public HorderType getHorderTypeCache(int aIndex)
 		{
 			return gHorderType[aIndex];		
+		}
+		
+		public void setFHorderTypeCache(HorderType aHorderTypeCache)
+		{
+			gFHorderType= aHorderTypeCache;		
+		}
+		
+		public HorderType getFHorderTypeCache()
+		{
+			return gFHorderType;		
 		}
 
 }
