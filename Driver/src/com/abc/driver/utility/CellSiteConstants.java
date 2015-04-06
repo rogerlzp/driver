@@ -54,6 +54,7 @@ public class CellSiteConstants {
 	public static final String SHIPPER_USERNAME = "shipper_username";
 	public static final String CONSIGNEE_ADDRESS_CODE = "ca_code";
 	public static final String HORDER_DESCRIPTION = "horder_desc";
+	public static final String SHIPPER_PHONE = "shipper_phone";
 
 	public static final String SHIPPER_ADDRESS_NAME = "shipper_address_name";
 	public static final String SHIPPER_ADDRESS_CODE_IN = "shipper_address_code";
@@ -63,6 +64,11 @@ public class CellSiteConstants {
 	// horder
 	public static final String HORDER_ID = "horder_id";
 	public static final String STATUS = "status";
+	public static final String REPLIED_DRIVERS = "replied_drivers";
+	public static final String SENT_DRIVERS = "sent_drivers";
+	public static final String REPLIED_DRIVERS_COUNT = "replied_drivers_num";
+	public static final String ALREADY_REPLIED= "alaready_replied";
+	public static final String DRIVER_ID= "driver_id";
 	// RESULT
 	public final static String LOGIN_RESULT = "login_result";
 	public final static String FORGET_PASSWORD_RESULT = "forget_password_result";
@@ -150,6 +156,9 @@ public class CellSiteConstants {
 	public static final String GET_HORDER_URL = HOST + "getHorder/fmobile";
 	public static final String GET_NEW_HORDER_URL = HOST
 			+ "getNewHorder/fmobile";
+	
+	public static final String  REPLY_HODER_URL = HOST
+			+ "replyHorder/fmobile";
 
 	public final static String USER_IMAGE_URL = HOST + "";// TOOD
 

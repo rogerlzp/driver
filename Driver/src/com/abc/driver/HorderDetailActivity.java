@@ -1,16 +1,28 @@
 package com.abc.driver;
 
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.abc.driver.model.Horder;
+import com.abc.driver.net.CellSiteHttpClient;
 import com.abc.driver.utility.CellSiteConstants;
 
 public class HorderDetailActivity extends BaseActivity {
 
+	private static final String TAG = "HorderDetailActivity";
 	Horder mHorder;
 	TextView mCTtv; // 货物类型
 	TextView mCVtv; // 货物体积
@@ -25,6 +37,10 @@ public class HorderDetailActivity extends BaseActivity {
 	
 	RelativeLayout mCWrl;// 货物重量
 	RelativeLayout mCVrl;//货物体积
+	private String phoneNum;
+	private String horderId;
+	private ReqHorderTask mReqHorderTask;
+	private ProgressDialog mProgressdialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +50,8 @@ public class HorderDetailActivity extends BaseActivity {
 
 		Intent intent = getIntent();
 
+		phoneNum = intent.getStringExtra(CellSiteConstants.SHIPPER_PHONE);
+		horderId = intent.getStringExtra(CellSiteConstants.HORDER_ID);
 		initView(intent);
 	}
 
@@ -80,6 +98,73 @@ public class HorderDetailActivity extends BaseActivity {
 				.getStringExtra(CellSiteConstants.TRUCK_TYPE)) - 1]);
 		mHItv.setText(intent.getStringExtra(CellSiteConstants.HORDER_ID));
 
+	}
+	
+	public void callPhone(View v){
+		Intent intent = new Intent(Intent.ACTION_CALL, Uri
+				.parse("tel:" + phoneNum));
+		startActivity(intent);
+	}
+	
+	public void requestHorder(View v){
+		mReqHorderTask = new ReqHorderTask();
+		mReqHorderTask.execute(horderId, ""+ app.getUser().getId());
+	}
+	
+	int reqHorder(String _horderId, String _driverId) {
+
+		ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+		postParameters.add(new BasicNameValuePair(CellSiteConstants.HORDER_ID,
+				_horderId));
+		postParameters.add(new BasicNameValuePair(CellSiteConstants.DRIVER_ID,
+				_driverId));
+
+		JSONObject response = null;
+		try {
+			response = CellSiteHttpClient.executeHttpPost(
+					CellSiteConstants.REPLY_HODER_URL, postParameters);
+
+			int resultCode = Integer.parseInt(response.get(
+					CellSiteConstants.RESULT_CODE).toString());
+			Log.d(TAG, "ResultCode = " + resultCode);
+			if (CellSiteConstants.RESULT_SUC == resultCode) {
+
+				// app.startToSearchLoc();
+			} else if (resultCode == CellSiteConstants.REGISTER_USER_EXISTS) {
+				// 用户名已经被注册
+
+			}
+			return resultCode;
+		} catch (Exception e) {
+			Log.d(TAG, "Register by mail fails." + e.getMessage());
+			return CellSiteConstants.UNKNOWN_ERROR;
+		}
+	}
+
+	private class ReqHorderTask extends AsyncTask<String, String, Integer> {
+		@Override
+		public Integer doInBackground(String... params) {
+			return reqHorder(params[0], params[1]);
+		}
+
+		@Override
+		public void onPostExecute(Integer result) {
+			Log.d(TAG, "onPostExecute" + result);
+
+			if (mProgressdialog != null) {
+				mProgressdialog.cancel();
+			}
+
+			if (this.isCancelled()) {
+				return;
+			}
+			if (CellSiteConstants.RESULT_SUC == result) {
+					
+			} else {
+
+			}
+
+		}
 	}
 
 }

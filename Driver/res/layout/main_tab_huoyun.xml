@@ -35,6 +35,7 @@
             android:id="@+id/huoyun_lv"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:descendantFocusability="blocksDescendants"
             android:layout_weight="1"
             android:cacheColorHint="#d3d7d4"
             android:divider="#d3d7d4"

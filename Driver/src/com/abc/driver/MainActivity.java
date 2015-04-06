@@ -18,7 +18,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -39,6 +41,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -48,8 +51,10 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.abc.driver.CityDialog.InputListener;
+import com.abc.driver.model.User;
 import com.abc.driver.net.CellSiteHttpClient;
 import com.abc.driver.utility.CellSiteConstants;
 import com.abc.driver.utility.CityDBReader;
@@ -83,6 +88,9 @@ public class MainActivity extends BaseActivity {
 	private TextView mTTtv;
 	private TextView mTLtv;
 
+	public String phoneNum;
+	HashMap<String, Object> mHorderData ;
+
 	CityDialog mCityDialog = null;
 
 	private ViewPager mTabPager;
@@ -102,6 +110,9 @@ public class MainActivity extends BaseActivity {
 	int mCurrRadioIdx = 0;
 
 	private GetTruckTask mGetTruckTask;
+	
+	
+	ReplyHorderTask mReplyHorderTask ;
 
 	// 创建行车计划
 	private String mTruckShipperAddressCode;
@@ -529,7 +540,8 @@ public class MainActivity extends BaseActivity {
 				}
 
 				mFHorderDownLoadTask = new FHorderDownLoadTask();
-				mFHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
+				mFHorderDownLoadTask
+						.execute(CellSiteConstants.NORMAL_OPERATION);
 				break;
 			case 2:
 				mTab3.setImageDrawable(getResources().getDrawable(
@@ -1153,6 +1165,12 @@ public class MainActivity extends BaseActivity {
 						.findViewById(R.id.shipper_time_tv);
 				holder.tv_location = (TextView) convertView
 						.findViewById(R.id.location_tv);
+				holder.tv_replied_driver = (TextView) convertView
+						.findViewById(R.id.replied_driver_tv);
+				holder.tv_contact = (TextView) convertView
+						.findViewById(R.id.contact_tv);
+				holder.tv_reply = (TextView) convertView
+						.findViewById(R.id.replyHorder_tv);
 
 				/*
 				 * holder.progress = (ViewGroup) convertView
@@ -1196,16 +1214,54 @@ public class MainActivity extends BaseActivity {
 			holder.tv_time.setText((String) horderData
 					.get(CellSiteConstants.SHIPPER_DATE));
 
+			holder.tv_replied_driver.setText(res
+					.getString(R.string.replied_driver)
+					+ ": "
+					+ horderData.get(CellSiteConstants.REPLIED_DRIVERS_COUNT));
+			phoneNum = (String) horderData.get(CellSiteConstants.SHIPPER_PHONE);
+			// TODO: 优化
+			holder.tv_contact.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(Intent.ACTION_CALL, Uri
+							.parse("tel:" + phoneNum));
+					startActivity(intent);
+
+				}
+			});
+
+			if ((Integer) horderData.get(CellSiteConstants.ALREADY_REPLIED) == 1) {
+				holder.tv_reply.setText("disable");
+			} else {
+				holder.tv_reply.setText("enable");
+				 mReplyHorderTask = new ReplyHorderTask();
+				 mHorderData = horderData;
+				 
+				holder.tv_reply.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						mReplyHorderTask.execute((String)mHorderData.get("horder_id") , ""+app.getUser().getId());
+
+					}
+				});
+			}
+
 			return convertView;
 		}
 
 		private class ViewHolder {
 			ImageView organizerPortrait;
+			TextView tv_replied_driver;
 			TextView tv_location;
 			TextView tv_horder_id;
 			TextView tv_truck;
 			TextView tv_cargo;
 			TextView tv_time;
+			TextView tv_contact;
+			TextView tv_reply;
 			ViewGroup progress;
 		}
 
@@ -1576,7 +1632,8 @@ public class MainActivity extends BaseActivity {
 
 			try {
 				if (isForceRefreshFH
-						|| moreOperation == CellSiteConstants.MORE_OPERATION ||app.getFHorderTypeCache() == null) {
+						|| moreOperation == CellSiteConstants.MORE_OPERATION
+						|| app.getFHorderTypeCache() == null) {
 					getFHorder();
 					if (mFHorderTypes.nHorders.size() < mFHorderTypes.nDisplayNum
 							+ CellSiteConstants.PAGE_COUNT
@@ -1584,7 +1641,7 @@ public class MainActivity extends BaseActivity {
 						mFHorderTypes.hasShowAllHorders = true;
 					}
 				} else {
-					 mFHorderTypes = app.getFHorderTypeCache();
+					mFHorderTypes = app.getFHorderTypeCache();
 				}
 
 			} catch (Exception e) {
@@ -1626,7 +1683,7 @@ public class MainActivity extends BaseActivity {
 
 				mFHorderTypes.nDisplayNum = mFHorderTypes.nHorders.size();
 				// TODO
-				 app.setFHorderTypeCache(mFHorderTypes);
+				app.setFHorderTypeCache(mFHorderTypes);
 
 				if (mFHorderTypes.nDisplayNum > 0) {
 					mFHolderMoreTv.setVisibility(View.VISIBLE);
@@ -1698,13 +1755,49 @@ public class MainActivity extends BaseActivity {
 				for (int i = 0; i < results.length(); i++) {
 					try {
 						JSONObject resultObj = (JSONObject) results.get(i);
+						JSONArray repliedDriversObj = null;
 						mHorder = new HashMap<String, Object>();
+
+						mHorder.put(CellSiteConstants.ALREADY_REPLIED, 0);
+						try {
+							// 1. 检查该用户有没有回复，如果已经回复，标志为repliedtag 为1， 否则为0
+							// 2.
+							repliedDriversObj = resultObj
+									.getJSONArray(CellSiteConstants.REPLIED_DRIVERS);
+							if (repliedDriversObj != null) {
+								for (int j = 0; j < repliedDriversObj.length(); j++) {
+									String driver_id = ((JSONObject) results
+											.get(i))
+											.getString(CellSiteConstants.DRIVER_ID);
+									if (driver_id.equals(""
+											+ app.getUser().getId())) {
+										mHorder.put(
+												CellSiteConstants.ALREADY_REPLIED,
+												1);
+										break;
+									}
+
+								}
+								mHorder.put(
+										CellSiteConstants.REPLIED_DRIVERS_COUNT,
+										repliedDriversObj.length());
+							}
+						} catch (Exception e) {
+
+						}
+
 						mHorder.put(
 								CellSiteConstants.SHIPPER_USERNAME,
 								resultObj
 										.getString(CellSiteConstants.SHIPPER_USERNAME));
 						mHorder.put(CellSiteConstants.HORDER_ID,
 								(resultObj).getString(CellSiteConstants.ID));
+						mHorder.put(
+								CellSiteConstants.SHIPPER_PHONE,
+								(resultObj)
+										.getString(CellSiteConstants.SHIPPER_PHONE));
+						mHorder.put(CellSiteConstants.USER_ID, (resultObj)
+								.getString(CellSiteConstants.USER_ID));
 
 						CityDBReader dbReader = new CityDBReader(
 								this.getApplicationContext());
@@ -1755,6 +1848,62 @@ public class MainActivity extends BaseActivity {
 
 		}
 
+	}
+
+	int replyHorder(String _horderId, String _driverId) {
+
+		ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+		postParameters.add(new BasicNameValuePair(CellSiteConstants.HORDER_ID,
+				_horderId));
+		postParameters.add(new BasicNameValuePair(CellSiteConstants.DRIVER_ID,
+				_driverId));
+
+		JSONObject response = null;
+		try {
+			response = CellSiteHttpClient.executeHttpPost(
+					CellSiteConstants.REPLY_HODER_URL, postParameters);
+
+			int resultCode = Integer.parseInt(response.get(
+					CellSiteConstants.RESULT_CODE).toString());
+			Log.d(TAG, "ResultCode = " + resultCode);
+			if (CellSiteConstants.RESULT_SUC == resultCode) {
+
+				// app.startToSearchLoc();
+			} else if (resultCode == CellSiteConstants.REGISTER_USER_EXISTS) {
+				// 用户名已经被注册
+
+			}
+			return resultCode;
+		} catch (Exception e) {
+			Log.d(TAG, "Register by mail fails." + e.getMessage());
+			return CellSiteConstants.UNKNOWN_ERROR;
+		}
+	}
+
+	private class ReplyHorderTask extends AsyncTask<String, String, Integer> {
+		@Override
+		public Integer doInBackground(String... params) {
+			return replyHorder(params[0], params[1]);
+		}
+
+		@Override
+		public void onPostExecute(Integer result) {
+			Log.d(TAG, "onPostExecute" + result);
+
+			if (mProgressdialog != null) {
+				mProgressdialog.cancel();
+			}
+
+			if (this.isCancelled()) {
+				return;
+			}
+			if (CellSiteConstants.RESULT_SUC == result) {
+					
+			} else {
+
+			}
+
+		}
 	}
 
 }

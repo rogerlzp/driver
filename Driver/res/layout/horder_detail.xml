@@ -27,28 +27,15 @@
             android:text="@string/horder_detail"
             android:textColor="#ffffff"
             android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="67dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:clickable="true"
-            android:onClick="delHorder"
-            android:text="@string/delete"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
     </RelativeLayout>
-    
-      <TextView
-            android:id="@+id/horder_id_tv"
-            android:layout_width="220dp"
-            android:visibility="gone"
-            android:layout_height="fill_parent"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/horder_id_tv"
+        android:layout_width="220dp"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/shipper_address"
@@ -206,5 +193,33 @@
             android:layout_marginRight="20dp"
             android:hint="@string/horder_desc" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/contact_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="callPhone"
+            android:text="@string/contact"
+            android:textColor="#000000"
+            android:textSize="12dp" />
+
+        <Button
+            android:id="@+id/replyHorder_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="reqHorder"
+            android:text="@string/jiedan"
+            android:textColor="#000000"
+            android:textSize="12dp" />
+    </LinearLayout>
 
 </LinearLayout>
