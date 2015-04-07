@@ -84,9 +84,9 @@
     <string name="horder_waiting">未确认货单</string>
     <string name="horder_sent">进行中货单</string>
     <string name="horder_history">历史货单</string>
-        <string name="replied_driver">意向司机</string>
-          <string name="contact">电话联系</string>
-            <string name="jiedan">接单</string>
+    <string name="replied_driver">意向司机</string>
+    <string name="contact">电话联系</string>
+    <string name="jiedan">接单</string>
     <!-- horder list end -->
 
 
@@ -123,6 +123,9 @@
     <string name="confirmquit">确认退出</string>
     <string name="updateName">更改名字</string>
     <string name="updateNameHint">你的姓名</string>
+    <string name="already_requested">已申请接单</string>
+    <string name="request_horder">申请接单</string>
+
     <!-- Setting  start -->
 
 

@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity {
 	private TextView mTLtv;
 
 	public String phoneNum;
-	HashMap<String, Object> mHorderData ;
+	HashMap<String, Object> mHorderData;
 
 	CityDialog mCityDialog = null;
 
@@ -110,9 +110,8 @@ public class MainActivity extends BaseActivity {
 	int mCurrRadioIdx = 0;
 
 	private GetTruckTask mGetTruckTask;
-	
-	
-	ReplyHorderTask mReplyHorderTask ;
+
+	ReplyHorderTask mReplyHorderTask;
 
 	// 创建行车计划
 	private String mTruckShipperAddressCode;
@@ -239,6 +238,10 @@ public class MainActivity extends BaseActivity {
 					.get(position).get(CellSiteConstants.HORDER_STATUS));
 			intent.putExtra(CellSiteConstants.SHIPPER_DATE, (String) aHorders
 					.get(position).get(CellSiteConstants.SHIPPER_DATE));
+			intent.putExtra(
+					CellSiteConstants.ALREADY_REPLIED,
+					(Integer) aHorders.get(position).get(
+							CellSiteConstants.ALREADY_REPLIED));
 			intent.putExtra(
 					CellSiteConstants.SHIPPER_USERNAME,
 					(String) aHorders.get(position).get(
@@ -1232,18 +1235,21 @@ public class MainActivity extends BaseActivity {
 			});
 
 			if ((Integer) horderData.get(CellSiteConstants.ALREADY_REPLIED) == 1) {
-				holder.tv_reply.setText("disable");
+				holder.tv_reply.setText(res
+						.getString(R.string.already_requested));
 			} else {
-				holder.tv_reply.setText("enable");
-				 mReplyHorderTask = new ReplyHorderTask();
-				 mHorderData = horderData;
-				 
+				holder.tv_reply.setText(res.getString(R.string.request_horder));
+				mReplyHorderTask = new ReplyHorderTask();
+				mHorderData = horderData;
+
 				holder.tv_reply.setOnClickListener(new View.OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						
-						mReplyHorderTask.execute((String)mHorderData.get("horder_id") , ""+app.getUser().getId());
+
+						mReplyHorderTask.execute(
+								(String) mHorderData.get("horder_id"), ""
+										+ app.getUser().getId());
 
 					}
 				});
@@ -1766,7 +1772,7 @@ public class MainActivity extends BaseActivity {
 									.getJSONArray(CellSiteConstants.REPLIED_DRIVERS);
 							if (repliedDriversObj != null) {
 								for (int j = 0; j < repliedDriversObj.length(); j++) {
-									String driver_id = ((JSONObject) results
+									String driver_id = ((JSONObject) repliedDriversObj
 											.get(i))
 											.getString(CellSiteConstants.DRIVER_ID);
 									if (driver_id.equals(""
@@ -1861,7 +1867,7 @@ public class MainActivity extends BaseActivity {
 		JSONObject response = null;
 		try {
 			response = CellSiteHttpClient.executeHttpPost(
-					CellSiteConstants.REPLY_HODER_URL, postParameters);
+					CellSiteConstants.REQUEST_HODER_URL, postParameters);
 
 			int resultCode = Integer.parseInt(response.get(
 					CellSiteConstants.RESULT_CODE).toString());
@@ -1898,7 +1904,7 @@ public class MainActivity extends BaseActivity {
 				return;
 			}
 			if (CellSiteConstants.RESULT_SUC == result) {
-					
+
 			} else {
 
 			}

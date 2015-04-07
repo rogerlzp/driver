@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class HorderDetailActivity extends BaseActivity {
 	TextView mHSDtv; // 发送时间
 	TextView mHDtv; // 货源描述
 	TextView mHItv; // 货源id
+	Button mReqHorderBtn;
 	
 	RelativeLayout mCWrl;// 货物重量
 	RelativeLayout mCVrl;//货物体积
@@ -41,6 +43,8 @@ public class HorderDetailActivity extends BaseActivity {
 	private String horderId;
 	private ReqHorderTask mReqHorderTask;
 	private ProgressDialog mProgressdialog;
+	
+	boolean ALREADY_REQUESTED = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,9 @@ public class HorderDetailActivity extends BaseActivity {
 
 		phoneNum = intent.getStringExtra(CellSiteConstants.SHIPPER_PHONE);
 		horderId = intent.getStringExtra(CellSiteConstants.HORDER_ID);
+		ALREADY_REQUESTED = intent.getIntExtra(CellSiteConstants.ALREADY_REPLIED, 0)==1?true:false;
+		
+	
 		initView(intent);
 	}
 
@@ -68,6 +75,8 @@ public class HorderDetailActivity extends BaseActivity {
 		mHItv = (TextView) findViewById(R.id.horder_id_tv);
 		mCWrl = (RelativeLayout)findViewById(R.id.cargo_weight_rl);
 		mCVrl = (RelativeLayout)findViewById(R.id.cargo_volume_rl);
+		mReqHorderBtn = (Button)findViewById(R.id.req_horder_btn);
+		
 		mCTtv.setText(CellSiteConstants.CargoTypes[Integer.valueOf(intent
 				.getStringExtra(CellSiteConstants.CARGO_TYPE)) - 1]);
 		mTTtv.setText(CellSiteConstants.TruckTypes[Integer.valueOf(intent
@@ -122,7 +131,7 @@ public class HorderDetailActivity extends BaseActivity {
 		JSONObject response = null;
 		try {
 			response = CellSiteHttpClient.executeHttpPost(
-					CellSiteConstants.REPLY_HODER_URL, postParameters);
+					CellSiteConstants.REQUEST_HODER_URL, postParameters);
 
 			int resultCode = Integer.parseInt(response.get(
 					CellSiteConstants.RESULT_CODE).toString());
@@ -130,9 +139,8 @@ public class HorderDetailActivity extends BaseActivity {
 			if (CellSiteConstants.RESULT_SUC == resultCode) {
 
 				// app.startToSearchLoc();
-			} else if (resultCode == CellSiteConstants.REGISTER_USER_EXISTS) {
-				// 用户名已经被注册
-
+			} else  {
+				
 			}
 			return resultCode;
 		} catch (Exception e) {
@@ -159,7 +167,12 @@ public class HorderDetailActivity extends BaseActivity {
 				return;
 			}
 			if (CellSiteConstants.RESULT_SUC == result) {
-					
+					// 更新状态
+				mReqHorderBtn.setText(res.getText(R.string.already_requested));
+				mReqHorderBtn.setBackgroundColor(111); //TODO: 添加disable 状态
+				ALREADY_REQUESTED = true; //TODO: 将更新状态返回
+				
+				
 			} else {
 
 			}

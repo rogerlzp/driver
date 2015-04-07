@@ -157,8 +157,8 @@ public class CellSiteConstants {
 	public static final String GET_NEW_HORDER_URL = HOST
 			+ "getNewHorder/fmobile";
 	
-	public static final String  REPLY_HODER_URL = HOST
-			+ "replyHorder/fmobile";
+	public static final String  REQUEST_HODER_URL = HOST
+			+ "requestHorder/fmobile";
 
 	public final static String USER_IMAGE_URL = HOST + "";// TOOD
 
