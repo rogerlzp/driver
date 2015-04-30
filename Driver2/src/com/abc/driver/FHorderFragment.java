@@ -67,7 +67,7 @@ public class FHorderFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		app = (CellSiteApplication) this.getActivity().getApplication();
-		initFHorders();
+
 	}
 
 	@Override
