@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#dddddd"
+    android:clickable="true"
+    android:onClick="OnCloseSoftKeyboard"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/titleLayoutId"
+        style="@style/titleLayout" >
+
+        <TextView
+            style="@style/return_button"
+            android:layout_width="80dp"
+            android:layout_height="48dp" />
+
+        <TextView
+            style="@style/titleTextView"
+            android:text="@string/registerViaMobile" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/titleLayoutId"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_milkwhite_upside_circlecorner"
+            android:padding="10dp" >
+
+            <EditText
+                android:id="@+id/mobile_number_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/verify_code_btn"
+                android:layout_toStartOf="@+id/verify_code_btn"
+                android:hint="@string/mobile_number_hint"
+                android:inputType="number"
+                android:maxLength="11"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/verify_code_btn"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/get_verify_code"
+                android:onClick="getVerifycode"
+                android:textColor="#000000" />
+        </RelativeLayout>
+
+         <EditText
+            android:id="@+id/verify_code_tv"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/shape_milkwhite_downside_circlecorner"
+            android:gravity="left|center_vertical"
+            android:hint="@string/verify_code_hint"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:password="true"
+            android:textColor="#000000"
+            android:textSize="18dp" />
+        
+        
+        <EditText
+            android:id="@+id/password_tv"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/shape_milkwhite_downside_circlecorner"
+            android:gravity="left|center_vertical"
+            android:hint="@string/pwd_hint"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:password="true"
+            android:textColor="#000000"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/register_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/hovered_stroke_white2deepblue"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/register"
+            android:textColor="#000000"
+            android:textSize="18dp" >
+        </TextView>
+    </LinearLayout>
+
+</RelativeLayout>

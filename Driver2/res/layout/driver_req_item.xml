@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llUploadPortrait"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:background="@drawable/hover_solid_white_square"
+    android:orientation="vertical"
+    android:paddingRight="10dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_height="30dp" >
+
+        <TextView
+            android:id="@+id/name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_centerVertical="true"
+            android:maxLines="1"
+            android:text="@string/name"
+            android:textSize="16sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/driver_id_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxLines="1"
+            android:textSize="16sp"
+            android:visibility="gone" >
+        </TextView>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#000000" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp" >
+
+        <ImageView
+            android:id="@+id/truck_phpoto_iv"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/user_dp" />
+
+        <TextView
+            android:id="@+id/truck_type_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_toRightOf="@id/truck_phpoto_iv"
+            android:text="@string/truck_type"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/truck_location_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_below="@id/truck_type_tv"
+            android:layout_toRightOf="@id/truck_phpoto_iv"
+            android:text="@string/truck_location"
+            android:textSize="12sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/contact_tv"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/contact"
+            android:textColor="#000000"
+            android:textSize="12dp" />
+
+        <TextView
+            android:id="@+id/select_driver_tv"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/confirm_driver"
+            android:textColor="#000000"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+</LinearLayout>

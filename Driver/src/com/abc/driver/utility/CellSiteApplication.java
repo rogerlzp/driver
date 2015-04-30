@@ -22,7 +22,8 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
 
-import com.abc.driver.MainActivity.HorderType;
+import com.abc.driver.cache.HorderType;
+import com.abc.driver.cache.WorkHorderType;
 import com.abc.driver.model.Truck;
 import com.abc.driver.model.User;
 
@@ -40,7 +41,7 @@ public class CellSiteApplication extends Application {
 	public enum NETWORK_UPDATE_MODE {
 		WIFI_ONLY, ALL_UPDATE
 	}
-	
+
 	List<String> hasDownloadBmpList = new ArrayList<String>();
 	List<String> hasDownloadJsonList = new ArrayList<String>();
 
@@ -59,33 +60,28 @@ public class CellSiteApplication extends Application {
 
 	File cacheFileDir; // Download the file, dir
 	public String regUserPath;
-	
+
 	protected Truck truck = null; // truck 信息放在app 中
-	
+
 	BitmapFactory.Options mBitmapDecodeOption;
 	final int IO_BUFFER_SIZE = 1024;
 	final int MEMORY_FOR_BITMAP_DECODE = 12 * 1024;
-	
+
 	// HorderType cache
-	HorderType[] gHorderType = new HorderType[3];
-	
+	WorkHorderType[] gHorderType = new WorkHorderType[3];
+
 	Bitmap mPortaritBitmap = null;
 
 	// 可供司机接单的horder
-	HorderType gFHorderType = null; 
-	
-	
+	HorderType gFHorderType = null;
+
 	public Bitmap getPortaritBitmap() {
 		return mPortaritBitmap;
 	}
 
-
-
 	public void setPortaritBitmap(Bitmap mPortaritBitmap) {
 		this.mPortaritBitmap = mPortaritBitmap;
 	}
-
-
 
 	@Override
 	public void onCreate() {
@@ -94,17 +90,14 @@ public class CellSiteApplication extends Application {
 		// must be initialization first!!!
 
 		checkSDCardAvaible();
-		
-		
+
 		initCacheFileDir();
-		
+
 		initUser();
 
 		// initial the unnecessarily-started component
 		// startService(new Intent(this, InitService.class));
 	}
-	
-
 
 	public void CreatBitmapCache() {
 		mBitmapDecodeOption = new BitmapFactory.Options();
@@ -112,8 +105,7 @@ public class CellSiteApplication extends Application {
 		mBitmapDecodeOption.inPurgeable = true;
 		mBitmapDecodeOption.inTempStorage = new byte[MEMORY_FOR_BITMAP_DECODE];
 	}
-	
-	
+
 	public void initUser() {
 		SharedPreferences sp = getSharedPreferences(
 				CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE);
@@ -121,32 +113,28 @@ public class CellSiteApplication extends Application {
 		String userId = sp.getString(CellSiteConstants.USER_ID, null);
 		String mobileNum = sp.getString(CellSiteConstants.MOBILE, null);
 		String name = sp.getString(CellSiteConstants.NAME, null);
-		String profileImageUrl = sp.getString(CellSiteConstants.PROFILE_IMAGE_URL, null);
-		
+		String profileImageUrl = sp.getString(
+				CellSiteConstants.PROFILE_IMAGE_URL, null);
+
 		user = new User();
-		if (username != null) 
-		{
-				user.setUsername(username);
-				if (userId != null) {
-					user.setId(Long.parseLong(sp.getString(
-							CellSiteConstants.USER_ID, null)));
-				}
-				user.setMobileNum(mobileNum);
-				user.setProfileImageUrl(profileImageUrl);
-				user.setName(name);
-				this.attachUser(user);
-		} else 
-		{ // visitor mode
+		if (username != null) {
+			user.setUsername(username);
+			if (userId != null) {
+				user.setId(Long.parseLong(sp.getString(
+						CellSiteConstants.USER_ID, null)));
+			}
+			user.setMobileNum(mobileNum);
+			user.setProfileImageUrl(profileImageUrl);
+			user.setName(name);
+			this.attachUser(user);
+		} else { // visitor mode
 			user.setId(User.INVALID_ID);
-		//	setUserMode(CellSiteConstants.VISITOR_MODE);
+			// setUserMode(CellSiteConstants.VISITOR_MODE);
 		}
 
-		return ;
+		return;
 	}
-	
-	
-	
-	
+
 	boolean checkSDCardAvaible() {
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
@@ -184,7 +172,7 @@ public class CellSiteApplication extends Application {
 		if (!cacheFileDir.exists()) {
 			cacheFileDir.mkdirs();
 		}
-		
+
 		regUserPath = CacheFilePath + "portraits";
 		File regUser = new File(regUserPath);
 		if (!regUser.exists()) {
@@ -222,200 +210,194 @@ public class CellSiteApplication extends Application {
 	public void setNetworkStatus(NETWORK_STATUS aStatus) {
 		mNetworkStatus = aStatus;
 	}
-	
-	
-	
-	 public synchronized Bitmap downloadBmpByUrl(String relativePath, String userTag) {
-			if (relativePath == null || relativePath.trim().length() == 0) {
-				return null;
+
+	public synchronized Bitmap downloadBmpByUrl(String relativePath,
+			String userTag) {
+		if (relativePath == null || relativePath.trim().length() == 0) {
+			return null;
+		}
+
+		String localPath = null;
+		String UrlStr = null;
+		String localDir = null;
+
+		localPath = relativePath.substring(relativePath.lastIndexOf("/") + 1,
+				relativePath.length());
+		Log.d(TAG, "path=" + relativePath);
+		Log.d(TAG, "path=" + localPath);
+
+		UrlStr = CellSiteConstants.USER_IMAGE_URL + relativePath; // image path
+																	// from the
+																	// server
+		localDir = userTag;
+
+		// 如果是离线状态，并且在本地有的话，则返回本地动路径
+		try {
+			File localFile = new File(userTag + "/" + localPath);
+			boolean localFileExits = localFile.exists() && localFile.isFile();
+			FileInputStream inputStream = null;
+			Bitmap result;
+
+			if ((mNetworkStatus == NETWORK_STATUS.OFFLINE)
+					|| hasDownloadBmpList.contains(relativePath)) {
+				if (localFileExits) {
+					try {
+						inputStream = new FileInputStream(localFile);
+						result = BitmapFactory.decodeFileDescriptor(
+								inputStream.getFD(), null, mBitmapDecodeOption);
+					} catch (Exception e) {
+						e.printStackTrace();
+						result = null;
+					} finally {
+						if (inputStream != null)
+							try {
+								inputStream.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+					}
+
+					return result;
+				} else {
+					return null;
+				}
+
 			}
 
-			String localPath = null;
-			String UrlStr = null;
-			String localDir = null;
-			
-			localPath = relativePath.substring(relativePath.lastIndexOf("/")+1, relativePath.length());
-			Log.d(TAG, "path="+relativePath);
-			Log.d(TAG, "path="+localPath);
-			
-				
-			UrlStr = CellSiteConstants.USER_IMAGE_URL + relativePath;  // image path from the server
-			localDir = userTag;
-
-			// 如果是离线状态，并且在本地有的话，则返回本地动路径
+			// 从服务器重新获取
 			try {
-				File localFile = new File(userTag +"/"+localPath);
-				boolean localFileExits = localFile.exists() && localFile.isFile();
-				FileInputStream inputStream = null;
-				Bitmap result;
+				URL url = new URL(UrlStr);
+				HttpURLConnection httpConn = (HttpURLConnection) url
+						.openConnection();
 
-				if ((mNetworkStatus == NETWORK_STATUS.OFFLINE)
-						|| hasDownloadBmpList.contains(relativePath)) {
-					if (localFileExits) {
+				long localLastModify;
+				long sererLastModified = httpConn.getLastModified();
+
+				// 更新获取时间，不需要下载
+				if (localFileExits) {
+					localLastModify = localFile.lastModified();
+					if (localLastModify == sererLastModified) {
+						inputStream = new FileInputStream(localFile);
 						try {
-							inputStream = new FileInputStream(localFile);
 							result = BitmapFactory.decodeFileDescriptor(
-									inputStream.getFD(), null, mBitmapDecodeOption);
-						} catch (Exception e) {
-							e.printStackTrace();
-							result = null;
+									inputStream.getFD(), null,
+									mBitmapDecodeOption);
+							hasDownloadBmpList.add(relativePath);
 						} finally {
-							if (inputStream != null)
-								try {
-									inputStream.close();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+							inputStream.close();
 						}
 
 						return result;
-					} else { 
-						return null;
+					} else {
+						localFile.delete();
 					}
-
 				}
 
-				//  从服务器重新获取
-				try {
-					URL url = new URL(UrlStr);
-					HttpURLConnection httpConn = (HttpURLConnection) url
-							.openConnection();
-
-					long localLastModify;
-					long sererLastModified = httpConn.getLastModified();
-
-					// 更新获取时间，不需要下载
-					if (localFileExits) {
-						localLastModify = localFile.lastModified();
-						if (localLastModify == sererLastModified) {
-							inputStream = new FileInputStream(localFile);
-							try {
-								result = BitmapFactory.decodeFileDescriptor(
-										inputStream.getFD(), null,
-										mBitmapDecodeOption);
-								hasDownloadBmpList.add(relativePath);
-							} finally {
-								inputStream.close();
-							}
-
-							return result;
-						} else {
-							localFile.delete();
-						}
-					}
-
-					
-					// 从服务器下载
-					File fileDir = new File(localDir);
-					if (!fileDir.exists())
-						fileDir.mkdirs();
-					if (httpConn != null) {
-						httpConn.disconnect();
-					}
-
-			
-					 url = new URL(UrlStr);
-					HttpURLConnection fileDldConn = (HttpURLConnection) url
-							.openConnection();
-					
-					fileDldConn.connect();
-					Log.d(TAG, "++++++++++++++++++++++++++++++++++++++++++Get length :         " + fileDldConn.getContentLength());
-					InputStream is = fileDldConn.getInputStream();
-				
-
-					// read from new
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					byte[] buffer = new byte[IO_BUFFER_SIZE];
-
-					int len1 = 0;
-					while ((len1 = is.read(buffer)) != -1) {
-						bos.write(buffer, 0, len1);
-					}
-					bos.flush();
-					byte[] allBuffer = bos.toByteArray();
-
-					if (mIsSdCardAvaible) // only when SD is not occupied by other
-											// programs
-					{
-						// File newLocalFile = new File(localFile);
-						Log.d(TAG, "newLocalFile=" + localFile);
-						localFile.createNewFile();
-						FileOutputStream stream = new FileOutputStream(localFile);
-						stream.write(allBuffer);
-						stream.close();
-						localFile.setLastModified(sererLastModified);
-						hasDownloadBmpList.add(relativePath);
-						// end to save file
-					}
-					
-					/*
-					final BitmapFactory.Options options = new BitmapFactory.Options();
-					options.inJustDecodeBounds = true; 
-					
-					BufferedInputStream bufferStream = new BufferedInputStream(is);
-					Log.d(TAG, "mark !!!!!!!!1111111111111");
-					BitmapFactory.decodeStream(bufferStream,null,options);
-					Log.d(TAG, "mark 222222222222222");
-					if (is.markSupported()) {
-						Log.d(TAG, "mark supported");
-					bufferStream.reset();
-					}
-					
-
-				    // Calculate inSampleSize
-				options.inSampleSize = 1;
-
-				    // Decode bitmap with inSampleSize set
-				options.inJustDecodeBounds = false; 
-			//	BitmapFactory.decodeStream(bufferStream,null,options);
-					
-					Bitmap resultBitmap = BitmapFactory.decodeStream(bufferStream,null,options);
-					*/
-					
-					Bitmap resultBitmap = BitmapFactory.decodeFile(localFile.getPath());
-					//		decodeByteArray(allBuffer, 0, allBuffer.length);
-
-					bos.close();
-					is.close();
-			
-
-					return resultBitmap;
-				} catch (UnknownHostException unreachEx) {
-					mNetworkUnknowHostTimes++;
-					if (mNetworkUnknowHostTimes >= 3) {
-						mNetworkUnknowHostTimes = 0;
-					}
-
-				} catch (IOException ex) {
-					ex.printStackTrace();
+				// 从服务器下载
+				File fileDir = new File(localDir);
+				if (!fileDir.exists())
+					fileDir.mkdirs();
+				if (httpConn != null) {
+					httpConn.disconnect();
 				}
-			} catch (OutOfMemoryError e) {
-				e.printStackTrace();
-				System.gc();
+
+				url = new URL(UrlStr);
+				HttpURLConnection fileDldConn = (HttpURLConnection) url
+						.openConnection();
+
+				fileDldConn.connect();
+				Log.d(TAG,
+						"++++++++++++++++++++++++++++++++++++++++++Get length :         "
+								+ fileDldConn.getContentLength());
+				InputStream is = fileDldConn.getInputStream();
+
+				// read from new
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				byte[] buffer = new byte[IO_BUFFER_SIZE];
+
+				int len1 = 0;
+				while ((len1 = is.read(buffer)) != -1) {
+					bos.write(buffer, 0, len1);
+				}
+				bos.flush();
+				byte[] allBuffer = bos.toByteArray();
+
+				if (mIsSdCardAvaible) // only when SD is not occupied by other
+										// programs
+				{
+					// File newLocalFile = new File(localFile);
+					Log.d(TAG, "newLocalFile=" + localFile);
+					localFile.createNewFile();
+					FileOutputStream stream = new FileOutputStream(localFile);
+					stream.write(allBuffer);
+					stream.close();
+					localFile.setLastModified(sererLastModified);
+					hasDownloadBmpList.add(relativePath);
+					// end to save file
+				}
+
+				/*
+				 * final BitmapFactory.Options options = new
+				 * BitmapFactory.Options(); options.inJustDecodeBounds = true;
+				 * 
+				 * BufferedInputStream bufferStream = new
+				 * BufferedInputStream(is); Log.d(TAG,
+				 * "mark !!!!!!!!1111111111111");
+				 * BitmapFactory.decodeStream(bufferStream,null,options);
+				 * Log.d(TAG, "mark 222222222222222"); if (is.markSupported()) {
+				 * Log.d(TAG, "mark supported"); bufferStream.reset(); }
+				 * 
+				 * 
+				 * // Calculate inSampleSize options.inSampleSize = 1;
+				 * 
+				 * // Decode bitmap with inSampleSize set
+				 * options.inJustDecodeBounds = false; //
+				 * BitmapFactory.decodeStream(bufferStream,null,options);
+				 * 
+				 * Bitmap resultBitmap =
+				 * BitmapFactory.decodeStream(bufferStream,null,options);
+				 */
+
+				Bitmap resultBitmap = BitmapFactory.decodeFile(localFile
+						.getPath());
+				// decodeByteArray(allBuffer, 0, allBuffer.length);
+
+				bos.close();
+				is.close();
+
+				return resultBitmap;
+			} catch (UnknownHostException unreachEx) {
+				mNetworkUnknowHostTimes++;
+				if (mNetworkUnknowHostTimes >= 3) {
+					mNetworkUnknowHostTimes = 0;
+				}
+
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
-			return null;
+		} catch (OutOfMemoryError e) {
+			e.printStackTrace();
+			System.gc();
 		}
-	 
-	 
-		public void setHorderTypeCache(HorderType aHorderTypeCache, int aIndex)
-		{
-			gHorderType[aIndex] = aHorderTypeCache;		
-		}
-		
-		public HorderType getHorderTypeCache(int aIndex)
-		{
-			return gHorderType[aIndex];		
-		}
-		
-		public void setFHorderTypeCache(HorderType aHorderTypeCache)
-		{
-			gFHorderType= aHorderTypeCache;		
-		}
-		
-		public HorderType getFHorderTypeCache()
-		{
-			return gFHorderType;		
-		}
+		return null;
+	}
+
+	public void setWorkHorderTypeCache(WorkHorderType aHorderTypeCache,
+			int aIndex) {
+		gHorderType[aIndex] = aHorderTypeCache;
+	}
+
+	public WorkHorderType getWorkHorderTypeCache(int aIndex) {
+		return gHorderType[aIndex];
+	}
+
+	public void setFHorderTypeCache(HorderType aHorderTypeCache) {
+		gFHorderType = aHorderTypeCache;
+	}
+
+	public HorderType getFHorderTypeCache() {
+		return gFHorderType;
+	}
 
 }

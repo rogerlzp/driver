@@ -66,9 +66,13 @@ public class CellSiteConstants {
 	public static final String STATUS = "status";
 	public static final String REPLIED_DRIVERS = "replied_drivers";
 	public static final String SENT_DRIVERS = "sent_drivers";
-	public static final String REPLIED_DRIVERS_COUNT = "replied_drivers_num";
+	public static final String REPLIED_DRIVERS_COUNT = "replied_drivers_count";
 	public static final String ALREADY_REPLIED= "alaready_replied";
 	public static final String DRIVER_ID= "driver_id";
+	//public static final String REPLIED_DRIVER_COUNT= "replied_driver_count";
+	public static final String IS_DRIVER_REPLIED= "is_driver_replied";
+	
+
 	// RESULT
 	public final static String LOGIN_RESULT = "login_result";
 	public final static String FORGET_PASSWORD_RESULT = "forget_password_result";
@@ -153,9 +157,13 @@ public class CellSiteConstants {
 
 	// get my horder url
 	public static final String GET_MY_HORDER_URL = HOST + "getMyHorder/fmobile";
+	
+
 	public static final String GET_HORDER_URL = HOST + "getHorder/fmobile";
 	public static final String GET_NEW_HORDER_URL = HOST
 			+ "getNewHorder/fmobile";
+	
+	public static final String  GET_HORDER_FOR_DRIVER_URL = HOST + "getHorderdForDriver/fmobile";
 	
 	public static final String  REQUEST_HODER_URL = HOST
 			+ "requestHorder/fmobile";
@@ -198,6 +206,7 @@ public class CellSiteConstants {
 
 	public final static String RESULT_CODE = "result_code";
 	public final static int RESULT_SUC = 0;
+	public final static int RESULT_REMOVE = 1;
 	public final static String RESULT = "result";
 
 	// Truck 类型

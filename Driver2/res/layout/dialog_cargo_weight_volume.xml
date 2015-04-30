@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="200dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="start"
+        android:text="@string/cargo_weight" />
+
+    <EditText
+        android:id="@+id/cargo_weight_et"
+        android:inputType="numberDecimal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" >
+    </EditText>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="start"
+        android:text="@string/cargo_volume" />
+
+    <EditText
+        android:id="@+id/cargo_volume_et"
+        android:layout_width="match_parent"
+          android:inputType="numberDecimal"
+        android:layout_height="40dp" >
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/ok_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="确 定"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/cancel_btn"
+           android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dip"
+            android:text="取 消"
+            android:textColor="#ffffff"
+             android:layout_weight="1"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</LinearLayout>

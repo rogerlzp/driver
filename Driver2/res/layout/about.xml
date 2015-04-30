@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/titleLayout"
+        style="@style/titleLayout" >
+
+        <TextView
+            style="@style/return_button"
+            android:layout_width="80dp"
+            android:layout_height="48dp" />
+
+        <TextView
+            android:id="@+id/aboutTitleTop"
+            style="@style/titleTextView"
+            android:text="@string/about" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleLayout"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/mascot11" />
+
+    <LinearLayout
+        android:id="@+id/versionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/shape_milkwhite_upside_circlecorner"
+        android:clickable="true"
+        android:onClick="OnVersion"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvVersionTitle"
+            style="@style/settings_textview"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:gravity="left|center_vertical"
+            android:text="@string/version"
+            android:textColor="#4f5555" />
+
+        <TextView
+            android:id="@+id/tvVersionCode"
+            style="@style/settings_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:textColor="#4f5555" />
+        
+         <Button
+            android:id="@+id/btn_getVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_version" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/shape_milkwhite_downside_circlecorner" >
+
+        <TextView
+            style="@style/settings_textview"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:text="@string/officialQQ"
+            android:textColor="#4f5555" />
+        <TextView
+            android:id="@+id/qqcode"
+            style="@style/settings_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="@string/officialQQcode"
+            android:textColor="#4f5555" />
+    </LinearLayout>
+
+</LinearLayout>
