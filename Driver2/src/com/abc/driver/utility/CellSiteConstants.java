@@ -132,7 +132,7 @@ public class CellSiteConstants {
 	public static final int HORDER_WAITING = 0;
 	public static final int HORDER_SENT = 1;
 	public static final int HORDER_COMPLEMENTED = 2;
-	
+
 	public static final int HORDER_GETTING_CARGO = 1;
 	public static final int HORDER_SENTTING_CARGO = 2;
 	public static final int HORDER_ARRIVED_CARGO = 3;
@@ -172,6 +172,12 @@ public class CellSiteConstants {
 	// 车主工作状态中的Horder
 	public final static String GET_DRIVER_WORKING_HORDER_URL = HOST
 			+ "getDriverWorkingHorder/fmobile";
+	public final static String GET_DRIVER_WORKED_HORDER_URL = HOST
+			+ "getDriverWorkedHorder/fmobile";
+
+	// 车主修改horder 状态为到达
+	public final static String HODER_ARRIVED_URL = HOST
+			+ "setHorderArrivedByDriver/fmobile";
 
 	// 用户注册
 	public static final String REGISTER_URL = HOST + "register/fmobile";

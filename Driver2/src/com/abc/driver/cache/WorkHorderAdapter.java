@@ -13,7 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.abc.driver.MyHorderFragment.ReplyListener;
+import com.abc.driver.MyHorderFragment.HorderArrivedListener;
 import com.abc.driver.R;
 import com.abc.driver.utility.CellSiteConstants;
 
@@ -22,15 +22,15 @@ public class WorkHorderAdapter extends BaseAdapter {
 	public Context ctx;
 
 	ContactListener mContactListener;
-	ReplyListener mReplyListener;
+	HorderArrivedListener mHorderArrivedListener;
 
 	public String currentUserId;
 
 	public WorkHorderAdapter(Context context, String _currentUserId,
-			ReplyListener _mReplyListener) {
+			HorderArrivedListener _mHorderArrivedListener) {
 		this.ctx = context;
 		this.currentUserId = _currentUserId;
-		this.mReplyListener = _mReplyListener;
+		this.mHorderArrivedListener = _mHorderArrivedListener;
 
 	}
 
@@ -67,7 +67,7 @@ public class WorkHorderAdapter extends BaseAdapter {
 			holder.tv_status = (TextView) convertView
 					.findViewById(R.id.horder_status_tv);
 
-			holder.tv_reply.setOnClickListener(mReplyListener);
+			holder.tv_reply.setOnClickListener(mHorderArrivedListener);
 
 			/*
 			 * holder.progress = (ViewGroup) convertView
@@ -86,6 +86,7 @@ public class WorkHorderAdapter extends BaseAdapter {
 
 		holder.tv_horder_id.setText((String) horderData.get("horder_id"));
 
+		mHorderArrivedListener.setHorderId((String) horderData.get("horder_id"));
 		holder.tv_location.setText((String) horderData
 				.get(CellSiteConstants.SHIPPER_ADDRESS_NAME)
 				+ "~"

@@ -75,9 +75,9 @@ public class MyHorderFragment extends Fragment {
 
 		mHorderTypes[0] = new WorkHorderType(0, this.getActivity()
 				.getBaseContext(), "" + app.getUser().getId(),
-				new ReplyListener());
+				new HorderArrivedListener());
 		mHorderTypes[1] = new WorkHorderType(1, this.getActivity(), ""
-				+ app.getUser().getId(), new ReplyListener());
+				+ app.getUser().getId(), new HorderArrivedListener());
 
 	}
 
@@ -95,11 +95,8 @@ public class MyHorderFragment extends Fragment {
 		super.setUserVisibleHint(isVisibleToUser);
 
 		if (this.getView() != null) {
-
 			isViewShown = true;
-
 			lazyLoad();
-
 			// 相当于Fragment的onResume
 		} else {
 			isViewShown = false;
@@ -111,7 +108,6 @@ public class MyHorderFragment extends Fragment {
 		if (isViewShown && isPrepared) {
 			Log.d(TAG, "lazyLoad");
 			initHorders();
-
 			initChooseHorders();
 		}
 	}
@@ -291,9 +287,8 @@ public class MyHorderFragment extends Fragment {
 			try {
 				if (isForceRefreshHorder
 						|| moreOperation == CellSiteConstants.MORE_OPERATION
-						|| app.getHorderTypeCache(mCurrRadioIdx) == null) {
-					Log.d(TAG,
-							"Will connect the network and download the horders");
+						|| app.getWorkHorderTypeCache(mCurrRadioIdx) == null) {
+
 					getHorder(mCurrRadioIdx);
 
 					if (mHorderTypes[mCurrRadioIdx].nHorders.size() < mHorderTypes[mCurrRadioIdx].nDisplayNum
@@ -301,16 +296,12 @@ public class MyHorderFragment extends Fragment {
 							&& !mHasExceptionHorder) {
 						mHorderTypes[mCurrRadioIdx].hasShowAllHorders = true;
 					}
-					Log.d(TAG, "after download the horder");
+
 				} else {
-					Log.d(TAG, "Will use the cache, current radio index "
-							+ mCurrRadioIdx);
-					;
 
 					mHorderTypes[mCurrRadioIdx] = app
 							.getWorkHorderTypeCache(mCurrRadioIdx);
-					Log.d(TAG, "++++++++++++++++Number of My horders :"
-							+ mHorderTypes[mCurrRadioIdx].nHorders.size());
+
 				}
 
 			} catch (Exception e) {
@@ -318,7 +309,6 @@ public class MyHorderFragment extends Fragment {
 				return TAG_FAIL;
 			}
 
-			Log.d(TAG, "after download the horders: TAG_SUCC");
 			return TAG_SUCC;
 		}
 
@@ -389,9 +379,15 @@ public class MyHorderFragment extends Fragment {
 				.valueOf(CellSiteConstants.PAGE_COUNT)));
 		JSONObject response = null;
 		try {
-			response = CellSiteHttpClient.executeHttpPost(
-					CellSiteConstants.GET_DRIVER_WORKING_HORDER_URL,
-					postParameters);
+			if (mCurrRadioIdx == 0) {
+				response = CellSiteHttpClient.executeHttpPost(
+						CellSiteConstants.GET_DRIVER_WORKING_HORDER_URL,
+						postParameters);
+			} else {
+				response = CellSiteHttpClient.executeHttpPost(
+						CellSiteConstants.GET_DRIVER_WORKED_HORDER_URL,
+						postParameters);
+			}
 			int resultCode = response.getInt(CellSiteConstants.RESULT_CODE);
 			if (CellSiteConstants.RESULT_SUC == resultCode) {
 				parseJson(response);
@@ -539,7 +535,7 @@ public class MyHorderFragment extends Fragment {
 			// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
 
 			mHorderDownLoadTask = new HorderDownLoadTask();
-			mHorderDownLoadTask.execute(CellSiteConstants.MORE_OPERATION);
+			mHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
 		}
 
 		@Override
@@ -553,15 +549,15 @@ public class MyHorderFragment extends Fragment {
 			refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
 
 			mHorderDownLoadTask = new HorderDownLoadTask();
-			mHorderDownLoadTask.execute(CellSiteConstants.MORE_OPERATION);
+			mHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (app.getHorderTypeCache(mCurrRadioIdx) != null) {
-			if (app.getHorderTypeCache(mCurrRadioIdx).nHorders.size() != mHorderTypes[mCurrRadioIdx].nHorders
+		if (app.getWorkHorderTypeCache(mCurrRadioIdx) != null) {
+			if (app.getWorkHorderTypeCache(mCurrRadioIdx).nHorders.size() != mHorderTypes[mCurrRadioIdx].nHorders
 					.size()) {
 				mHorderTypes[mCurrRadioIdx].nHorders = app
 						.getHorderTypeCache(mCurrRadioIdx).nHorders;
@@ -572,27 +568,7 @@ public class MyHorderFragment extends Fragment {
 
 	}
 
-	public class ReplyHorderTask extends AsyncTask<String, String, Integer> {
-		@Override
-		public Integer doInBackground(String... params) {
-			return replyHorder(params[0]);
-		}
-
-		@Override
-		public void onPostExecute(Integer result) {
-			if (this.isCancelled()) {
-				return;
-			}
-			if (CellSiteConstants.RESULT_SUC == result) {
-
-			} else {
-
-			}
-
-		}
-	}
-
-	public class ReplyListener implements View.OnClickListener {
+	public class HorderArrivedListener implements View.OnClickListener {
 		private String horderId;
 
 		public void setHorderId(String _horderId) {
@@ -601,13 +577,50 @@ public class MyHorderFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			ReplyHorderTask mReplyHorderTask = new ReplyHorderTask();
-			mReplyHorderTask.execute(horderId);
+			HorderArrivedTask mHorderArrivedTask = new HorderArrivedTask();
+			mHorderArrivedTask.execute(horderId);
 
 		}
 	}
 
-	int replyHorder(String _horderId) {
+	public void updateHorderList(String horderId, int horderStatus) {
+		for (HashMap<String, Object> tmpHorder : mHorderTypes[mCurrRadioIdx].nHorders) {
+
+			if (((String) tmpHorder.get(CellSiteConstants.ID)).equals(horderId)) {
+				tmpHorder.put(CellSiteConstants.STATUS, horderStatus);
+				// update app cache
+				break;
+			}
+
+		}
+		app.setWorkHorderTypeCache(mHorderTypes[mCurrRadioIdx], mCurrRadioIdx);
+		mHorderTypes[mCurrRadioIdx].nHorderAdapter.notifyDataSetChanged();
+
+	}
+
+	public class HorderArrivedTask extends AsyncTask<String, String, Integer> {
+		private String horderId;
+
+		@Override
+		public Integer doInBackground(String... params) {
+			horderId = params[0];
+			return horderArrived(params[0]);
+		}
+
+		@Override
+		public void onPostExecute(Integer result) {
+			if (this.isCancelled()) {
+				return;
+			}
+			if (CellSiteConstants.HORDER_ARRIVED_CARGO == result) {
+				// update list
+				updateHorderList(horderId, result);
+			}
+
+		}
+	}
+
+	int horderArrived(String _horderId) {
 
 		ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 		postParameters.add(new BasicNameValuePair(CellSiteConstants.HORDER_ID,
@@ -618,17 +631,17 @@ public class MyHorderFragment extends Fragment {
 		JSONObject response = null;
 		try {
 			response = CellSiteHttpClient.executeHttpPost(
-					CellSiteConstants.REQUEST_HODER_URL, postParameters);
+					CellSiteConstants.HODER_ARRIVED_URL, postParameters);
 
 			int resultCode = Integer.parseInt(response.get(
 					CellSiteConstants.RESULT_CODE).toString());
 			Log.d(TAG, "ResultCode = " + resultCode);
 			if (CellSiteConstants.RESULT_SUC == resultCode) {
-
 				// app.startToSearchLoc();
-			} else if (resultCode == CellSiteConstants.REGISTER_USER_EXISTS) {
-				// 用户名已经被注册
-
+				// TODO: 确认到达后，修改状态
+				int horderStatus = Integer.parseInt(response.get(
+						CellSiteConstants.HORDER_STATUS).toString());
+				return horderStatus;
 			}
 			return resultCode;
 		} catch (Exception e) {
