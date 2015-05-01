@@ -26,8 +26,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.abc.driver.CityDialog.InputListener;
 import com.abc.driver.cache.HorderType;
-import com.abc.driver.cache.TruckType;
 import com.abc.driver.net.CellSiteHttpClient;
 import com.abc.driver.utility.CellSiteApplication;
 import com.abc.driver.utility.CellSiteConstants;
@@ -39,22 +39,32 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class FHorderFragment extends Fragment {
 
-	private static final String TAG = "HorderFragment";
-	PullToRefreshListView mTruckLv;
+	private static final String TAG = "FHorderFragment";
 
-	ViewGroup mTruckMore;
-	TextView mTruckMoreTv;
-	TruckType mTruckTypes = new TruckType(this.getActivity());
-	boolean isForceRefreshTruck = false;
-	Boolean mHasExceptionTruck = false;
-	int mLvHistoryPosTruck = 0;
+	PullToRefreshListView mFHorderLv;
+	HorderType mFHorderTypes;
+	ViewGroup mFHorderMore;
+	TextView mFHolderMoreTv;
+	boolean isForceRefreshFH = false;
+	Boolean mHasExceptionFHorder = false;
+	int mLvHistoryPosFH = 0;
+
+	ProgressDialog mFHProgressdialog;
+	FHorderDownLoadTask mFHorderDownLoadTask;
 
 	CellSiteApplication app;
 
 	TextView mSSAtv, mSCAtv;
-	String mShipperAddressCode, mConsigneeAddressCode;
-	
-	
+	String mShipperAddressCode, mConsigneeAddressCode, mShipperAddressCode_Old,
+			mConsigneeAddressCode_Old;
+
+	CityDialog mCityDialog = null;
+	InputListener listener1;
+	CityChooseListener cityChooseListener1;
+
+	InputListener listener2;
+	CityChooseListener cityChooseListener2;
+
 	private boolean isViewShown;
 	private boolean isPrepared;
 
@@ -67,7 +77,7 @@ public class FHorderFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		app = (CellSiteApplication) this.getActivity().getApplication();
-
+		initChooseAddressListener();
 	}
 
 	@Override
@@ -80,7 +90,6 @@ public class FHorderFragment extends Fragment {
 		return view;
 	}
 
-	
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
@@ -104,17 +113,6 @@ public class FHorderFragment extends Fragment {
 			initFHorders();
 		}
 	}
-	
-	PullToRefreshListView mFHorderLv;
-	HorderType mFHorderTypes;
-	ViewGroup mFHorderMore;
-	TextView mFHolderMoreTv;
-	boolean isForceRefreshFH = false;
-	Boolean mHasExceptionFHorder = false;
-	int mLvHistoryPosFH = 0;
-
-	ProgressDialog mFHProgressdialog;
-	FHorderDownLoadTask mFHorderDownLoadTask;
 
 	class FHorderDetailListener implements OnItemClickListener {
 		public Context ctx;
@@ -192,11 +190,6 @@ public class FHorderFragment extends Fragment {
 
 	public void initFHorders() {
 
-		mSSAtv = (TextView) this.getView().findViewById(
-				R.id.select_shipper_address_tv);
-		mSCAtv = (TextView) this.getView().findViewById(
-				R.id.select_consignee_address_tv);
-
 		mFHorderTypes = new HorderType(0, this.getActivity(), ""
 				+ app.getUser().getId(), new ReplyListener());
 		mFHorderLv = (PullToRefreshListView) this.getView().findViewById(
@@ -252,7 +245,7 @@ public class FHorderFragment extends Fragment {
 			// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
 
 			mFHorderDownLoadTask = new FHorderDownLoadTask();
-			mFHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
+			mFHorderDownLoadTask.execute(CellSiteConstants.MORE_OPERATION);
 		}
 
 		@Override
@@ -266,19 +259,54 @@ public class FHorderFragment extends Fragment {
 			refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
 
 			mFHorderDownLoadTask = new FHorderDownLoadTask();
-			mFHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
+			mFHorderDownLoadTask.execute(CellSiteConstants.MORE_OPERATION);
 		}
 	}
 
 	class FHorderDownLoadTask extends AsyncTask<Integer, String, String> {
 		static final String TAG_FAIL = "FAIL";
 		static final String TAG_SUCC = "SUCCESS";
+		static final String TAG_RETURN = "RETURN";
 
 		List<HashMap<String, String>> nTmpNewsData;
+
+		boolean IsShipperAddressChanged = false;
+		boolean IsConsigneeAddressChanged = false;
 
 		@Override
 		protected String doInBackground(Integer... params) {
 			int moreOperation = params[0];
+
+			// 检查是否是重新设置了筛选条件，如果是的话，则清空后，重新设置
+			if (mShipperAddressCode_Old == null) {
+				mShipperAddressCode_Old = mShipperAddressCode;
+				IsShipperAddressChanged = true;
+			} else {
+				if (mShipperAddressCode_Old.equals(mShipperAddressCode)) {
+					IsShipperAddressChanged = false;
+				} else {
+					IsShipperAddressChanged = true;
+				}
+			}
+			if (mConsigneeAddressCode_Old == null) {
+				mConsigneeAddressCode_Old = mConsigneeAddressCode;
+				IsConsigneeAddressChanged = true;
+			} else {
+				if (mConsigneeAddressCode_Old.equals(mConsigneeAddressCode)) {
+					IsConsigneeAddressChanged = false;
+				} else {
+					IsConsigneeAddressChanged = true;
+				}
+			}
+
+			if (IsShipperAddressChanged || IsConsigneeAddressChanged) {
+				app.setFHorderTypeCache(null); // 清空条件
+				mFHorderTypes.nHorders.clear();
+				mFHorderTypes.nDisplayNum = 0;
+			} else {
+				Log.d(TAG, "nothing changed");
+				//return TAG_RETURN;
+			}
 
 			try {
 				if (isForceRefreshFH
@@ -317,6 +345,7 @@ public class FHorderFragment extends Fragment {
 					isForceRefreshFH = false;
 					mFHorderLv.onRefreshComplete();
 				}
+
 				mFHorderTypes.nHorderAdapter.setHorders(mFHorderTypes.nHorders);
 				mFHorderLv.setAdapter(mFHorderTypes.nHorderAdapter);
 				mFHorderTypes.nHorderAdapter.notifyDataSetChanged();
@@ -467,9 +496,6 @@ public class FHorderFragment extends Fragment {
 								(resultObj)
 										.getString(CellSiteConstants.SHIPPER_USERNAME));
 
-						// TODO :
-						int counter = 0;
-
 						mFHorderTypes.nHorders.add(mHorder);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -507,9 +533,6 @@ public class FHorderFragment extends Fragment {
 			if (CellSiteConstants.RESULT_SUC == resultCode) {
 
 				// app.startToSearchLoc();
-			} else if (resultCode == CellSiteConstants.REGISTER_USER_EXISTS) {
-				// 用户名已经被注册
-
 			}
 			return resultCode;
 		} catch (Exception e) {
@@ -556,6 +579,62 @@ public class FHorderFragment extends Fragment {
 			ReplyHorderTask mReplyHorderTask = new ReplyHorderTask();
 			mReplyHorderTask.execute(horderId);
 
+		}
+	}
+
+	public void initChooseAddressListener() {
+
+		mSSAtv = (TextView) this.getView().findViewById(
+				R.id.select_shipper_address_tv);
+		mSCAtv = (TextView) this.getView().findViewById(
+				R.id.select_consignee_address_tv);
+
+		listener1 = new InputListener() {
+			@Override
+			public void getText(String str, String str2) {
+				// TODO Auto-generated method stub
+				mSSAtv.setText(str);
+				mShipperAddressCode = str2;
+
+			}
+		};
+		cityChooseListener1 = new CityChooseListener(this.getActivity(),
+				listener1);
+		mSSAtv.setOnClickListener(cityChooseListener1);
+
+		listener2 = new InputListener() {
+			@Override
+			public void getText(String str, String str2) {
+				// TODO Auto-generated method stub
+				mSCAtv.setText(str);
+				mConsigneeAddressCode = str2;
+				// 重新根据城市筛选
+				FHorderDownLoadTask mFHorderDownLoadTask = new FHorderDownLoadTask();
+				mFHorderDownLoadTask
+						.execute(CellSiteConstants.NORMAL_OPERATION);
+
+			}
+		};
+		cityChooseListener2 = new CityChooseListener(this.getActivity(),
+				listener2);
+		mSCAtv.setOnClickListener(cityChooseListener2);
+	}
+
+	class CityChooseListener implements View.OnClickListener {
+
+		public Context ctx;
+		private InputListener listener;
+
+		public CityChooseListener(Context _ctx, InputListener _listener) {
+			this.ctx = _ctx;
+			this.listener = _listener;
+		}
+
+		@Override
+		public void onClick(View v) {
+			mCityDialog = new CityDialog(ctx, listener);
+			mCityDialog.setTitle(R.string.choose_address);
+			mCityDialog.show();
 		}
 	}
 

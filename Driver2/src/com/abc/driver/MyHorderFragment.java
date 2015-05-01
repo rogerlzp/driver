@@ -539,7 +539,7 @@ public class MyHorderFragment extends Fragment {
 			// mHorderTypes[mCurrRadioIdx] = new HorderType(mCurrRadioIdx);
 
 			mHorderDownLoadTask = new HorderDownLoadTask();
-			mHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
+			mHorderDownLoadTask.execute(CellSiteConstants.MORE_OPERATION);
 		}
 
 		@Override
@@ -553,7 +553,7 @@ public class MyHorderFragment extends Fragment {
 			refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);// 加上时间
 
 			mHorderDownLoadTask = new HorderDownLoadTask();
-			mHorderDownLoadTask.execute(CellSiteConstants.NORMAL_OPERATION);
+			mHorderDownLoadTask.execute(CellSiteConstants.MORE_OPERATION);
 		}
 	}
 
