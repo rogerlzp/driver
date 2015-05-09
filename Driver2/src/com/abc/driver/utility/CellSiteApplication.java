@@ -164,8 +164,10 @@ public class CellSiteApplication extends Application {
 		String name = sp.getString(CellSiteConstants.NAME, null);
 		String profileImageUrl = sp.getString(
 				CellSiteConstants.PROFILE_IMAGE_URL, null);
-		String identityImageUrl = sp.getString(
-				CellSiteConstants.IDENTITY_CARD_IMAGE_URL, null);
+		String identityFrontImageUrl = sp.getString(
+				CellSiteConstants.IDENTITY_FRONT_IMAGE_URL, null);
+		String identityBackImageUrl = sp.getString(
+				CellSiteConstants.IDENTITY_BACK_IMAGE_URL, null);
 
 		user = new User();
 		if (username != null) {
@@ -177,7 +179,8 @@ public class CellSiteApplication extends Application {
 			user.setMobileNum(mobileNum);
 			user.setProfileImageUrl(profileImageUrl);
 			user.setName(name);
-			user.setIdentityImageUrl(identityImageUrl);
+			user.setIdentityFrontImageUrl(identityFrontImageUrl);
+			user.setIdentityBackImageUrl(identityBackImageUrl);
 			this.attachUser(user);
 		} else { // visitor mode
 			user.setId(User.INVALID_ID);

@@ -57,7 +57,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/mobile_tv"
+            android:id="@+id/me_mobile_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/name_tv"
@@ -101,7 +101,7 @@
             android:gravity="left|center_vertical"
             android:text="name"
             android:textColor="#000000"
-            android:textSize="21dp" />
+            android:textSize="21sp" />
     </RelativeLayout>
 
     <View
@@ -110,7 +110,55 @@
         android:background="#000000" />
 
     <RelativeLayout
-        android:id="@+id/setting"
+        android:id="@+id/verify_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="#eee"
+        android:clickable="true"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:text="@string/verify"
+            android:textColor="#000000"
+            android:textSize="21sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#000000" />
+
+    <RelativeLayout
+        android:id="@+id/logistics"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:background="#eee"
+        android:clickable="true"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:text="@string/logistics"
+            android:textColor="#000000"
+            android:textSize="21sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#000000" />
+
+    <RelativeLayout
+        android:id="@+id/me_setting_rl"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -125,7 +173,7 @@
             android:gravity="left|center_vertical"
             android:text="@string/settings"
             android:textColor="#000000"
-            android:textSize="21dp" />
+            android:textSize="21sp" />
     </RelativeLayout>
 
 </LinearLayout>

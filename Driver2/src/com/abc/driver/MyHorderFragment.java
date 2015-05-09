@@ -78,7 +78,7 @@ public class MyHorderFragment extends Fragment {
 				new HorderArrivedListener());
 		mHorderTypes[1] = new WorkHorderType(1, this.getActivity(), ""
 				+ app.getUser().getId(), new HorderArrivedListener());
-
+		lazyLoad();
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class MyHorderFragment extends Fragment {
 
 		if (this.getView() != null) {
 			isViewShown = true;
-			lazyLoad();
+		
 			// 相当于Fragment的onResume
 		} else {
 			isViewShown = false;

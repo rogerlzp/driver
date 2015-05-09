@@ -55,8 +55,8 @@ public class PersonalActivity extends BaseActivity {
 	// SigleBmpDownLoadTask mSwitchDownloadTask;
 
 	ProgressDialog mProgressdialog;
-	String name_current, mobile_current, portraitImageUrl, identityImageUrl,
-			dirverLicenseImageUrl;
+	String name_current, mobile_current, portraitImageUrl,
+			identityFrontImageUrl, dirverLicenseImageUrl;
 
 	MyUserDownLoadTask userDownLoadTask;
 	DownloadImageTask mDownloadImageTask;
@@ -96,15 +96,15 @@ public class PersonalActivity extends BaseActivity {
 		name_current = app.getUser().getName();
 		mobile_current = app.getUser().getMobileNum();
 		portraitImageUrl = app.getUser().getProfileImageUrl();
-		identityImageUrl = app.getUser().getIdentityImageUrl();
+		identityFrontImageUrl = app.getUser().getIdentityFrontImageUrl();
 
 		nameTv.setText(name_current);
 		mobileNumTv.setTag(mobile_current);
 		if (portraitImageUrl != null && !portraitImageUrl.equals("")) {
 			showImage(mUserPortraitIv, portraitImageUrl);
 		}
-		if (identityImageUrl != null && !identityImageUrl.equals("")) {
-			showImage(mUserIdentityIv, identityImageUrl);
+		if (identityFrontImageUrl != null && !identityFrontImageUrl.equals("")) {
+			showImage(mUserIdentityIv, identityFrontImageUrl);
 		}
 	}
 
@@ -133,12 +133,12 @@ public class PersonalActivity extends BaseActivity {
 		super.onResume();
 
 		String name_tmp = app.getUser().getName();
-		if (!name_tmp.equals(name_current)) {
+		if (name_tmp != null && !name_tmp.equals(name_current)) {
 			name_current = name_tmp;
 			nameTv.setText(name_current);
 		}
 		String mobile_tmp = app.getUser().getMobileNum();
-		if (!mobile_tmp.equals(mobile_current)) {
+		if (mobile_tmp != null && !mobile_tmp.equals(mobile_current)) {
 			mobile_current = mobile_tmp;
 			mobileNumTv.setText(mobile_current);
 		}
@@ -149,11 +149,12 @@ public class PersonalActivity extends BaseActivity {
 			portraitImageUrl = portraitImageUrl_tmp;
 			showImage(mUserPortraitIv, portraitImageUrl);
 		}
-		String identityImageUrl_tmp = app.getUser().getIdentityImageUrl();
-		if (identityImageUrl != null
-				&& !identityImageUrl_tmp.equals(identityImageUrl)) {
-			identityImageUrl = identityImageUrl_tmp;
-			showImage(mUserIdentityIv, identityImageUrl);
+		String identityFrontImageUrl_tmp = app.getUser()
+				.getIdentityFrontImageUrl();
+		if (identityFrontImageUrl != null
+				&& !identityFrontImageUrl_tmp.equals(identityFrontImageUrl)) {
+			identityFrontImageUrl = identityFrontImageUrl_tmp;
+			showImage(mUserIdentityIv, identityFrontImageUrl);
 		}
 
 	}
@@ -274,10 +275,10 @@ public class PersonalActivity extends BaseActivity {
 					public void onClick(DialogInterface dialog, int id) {
 						switch (id) {
 						case 0:
-							startToCameraActivity(CellSiteConstants.TAKE_IDENTITY);
+							startToCameraActivity(CellSiteConstants.TAKE_FRONT_IDENTITY);
 							break;
 						case 1:
-							startToMediaActivity(CellSiteConstants.PICK_IDENTITY);
+							startToMediaActivity(CellSiteConstants.PICK_FRONT_IDENTITY);
 							break;
 						}
 					}
@@ -358,14 +359,14 @@ public class PersonalActivity extends BaseActivity {
 
 				isPortraitChanged = true;
 			}
-		} else if (requestCode == CellSiteConstants.TAKE_IDENTITY
-				|| requestCode == CellSiteConstants.PICK_IDENTITY) {
+		} else if (requestCode == CellSiteConstants.TAKE_FRONT_IDENTITY
+				|| requestCode == CellSiteConstants.PICK_FRONT_IDENTITY) {
 
 			Uri uri = null;
-			if (requestCode == CellSiteConstants.TAKE_IDENTITY) {
+			if (requestCode == CellSiteConstants.TAKE_FRONT_IDENTITY) {
 				uri = imageUri;
 
-			} else if (requestCode == CellSiteConstants.PICK_IDENTITY) {
+			} else if (requestCode == CellSiteConstants.PICK_FRONT_IDENTITY) {
 				uri = data.getData();
 
 			}
@@ -420,7 +421,7 @@ public class PersonalActivity extends BaseActivity {
 			mUpdateIdentityImageTask = new UpdateIdentityImageTask();
 			mUpdateIdentityImageTask.execute("" + app.getUser().getId(),
 					Utils.bitmap2String(scaledBmp),
-					CellSiteConstants.UPDATE_USER_IDENTITY_URL);
+					CellSiteConstants.UPDATE_USER_IDENTITY_FRONT_URL);
 
 		}
 	}
@@ -561,14 +562,15 @@ public class PersonalActivity extends BaseActivity {
 			}
 
 			if (result != null) {
-				String identityImageUrl = result;
-				app.getUser().setIdentityImageUrl(identityImageUrl);
-				showImage(mUserIdentityIv, identityImageUrl);
+				String identityFrontImageUrl = result;
+				app.getUser().setIdentityFrontImageUrl(identityFrontImageUrl);
+				showImage(mUserIdentityIv, identityFrontImageUrl);
 
 				Editor sharedUser = getSharedPreferences(
 						CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE).edit();
-				sharedUser.putString(CellSiteConstants.IDENTITY_CARD_IMAGE_URL,
-						identityImageUrl);
+				sharedUser.putString(
+						CellSiteConstants.IDENTITY_FRONT_IMAGE_URL,
+						identityFrontImageUrl);
 				sharedUser.commit();
 			}
 		}

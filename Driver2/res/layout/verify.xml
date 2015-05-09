@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#eee"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/title_bar"
+        android:gravity="center_horizontal|center_vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:paddingBottom="2dp" >
+
+        <LinearLayout
+            android:id="@+id/user_verify_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:onClick="toggleVerify"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="@string/user_verify"
+                android:textSize="21sp" />
+
+            <View
+                android:id="@+id/sent_view"
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#000000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/truck_verify_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:onClick="toggleVerify"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="@string/truck_verify"
+                android:textSize="21sp" />
+
+            <View
+                android:id="@+id/history_view"
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#000000" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/verify_user_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:paddingBottom="2dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#ffffff" >
+
+            <TextView
+                android:id="@+id/verify_name_tv"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/name"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/verify_name_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@id/verify_name_tv"
+                android:text="@string/name" >
+            </EditText>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#ffffff" >
+
+            <TextView
+                android:id="@+id/mobile_tv"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/contact_mobile"
+                android:textSize="12sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/verify_mobile_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@id/mobile_tv" >
+            </EditText>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#000000" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#ffffff" >
+
+            <ImageView
+                android:id="@+id/identity_front_iv"
+                android:layout_width="160dp"
+                android:layout_height="80dp"
+                android:clickable="true"
+                android:onClick="updateIdentityFrontImage"
+                android:src="@drawable/user_dp" />
+
+            <TextView
+                android:id="@+id/identity_tv"
+                android:layout_width="160dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/identity_front_iv"
+                android:gravity="center"
+                android:text="@string/identify_front" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/identity_back_iv"
+                android:layout_width="160dp"
+                android:layout_height="80dp"
+                android:layout_toRightOf="@id/identity_front_iv"
+                android:clickable="true"
+                android:onClick="updateIdentityFrontImage"
+                android:src="@drawable/user_dp" />
+
+            <TextView
+                android:layout_width="160dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/identity_back_iv"
+                android:layout_toRightOf="@id/identity_tv"
+                android:gravity="center"
+                android:text="@string/identify_back" />
+
+            <ImageView
+                android:id="@+id/driver_license_iv"
+                android:layout_width="160dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/identity_tv"
+                android:clickable="true"
+                android:onClick="updateIdentityFrontImage"
+                android:src="@drawable/user_dp" />
+
+            <TextView
+                android:layout_width="160dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/driver_license_iv"
+                android:gravity="center"
+                android:text="@string/driver_license" >
+            </TextView>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#000000" />
+
+        <TextView
+            android:layout_width="160dp"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:text="@string/note_bitian" >
+        </TextView>
+
+        <Button
+            android:id="@+id/next_step_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:onClick="gotoNextStep"
+            android:text="@string/next_step" >
+        </Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/verify_truck_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:paddingBottom="2dp"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#ffffff" >
+
+            <TextView
+                android:id="@+id/truck_info_tv"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/truck_info"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/truck_info_update_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@id/truck_info_tv"
+                android:gravity="center"
+                android:text="@string/name" >
+            </EditText>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#ffffff" >
+
+            <TextView
+                android:id="@+id/license_plate_tv"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/license_plate"
+                android:textSize="12sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/license_plate_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@id/license_plate_tv" >
+            </EditText>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#000000" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#ffffff" >
+
+            <ImageView
+                android:id="@+id/vehicle_license_iv"
+                android:layout_width="160dp"
+                android:layout_height="80dp"
+                android:clickable="true"
+                android:onClick="updateIdentityFrontImage"
+                android:src="@drawable/user_dp" />
+
+            <TextView
+                android:id="@+id/vehicle_license_tv"
+                android:layout_width="160dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/vehicle_license_iv"
+                android:gravity="center"
+                android:text="@string/vehicle_license" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/vehicle_photo_iv"
+                android:layout_width="160dp"
+                android:layout_height="80dp"
+                android:layout_toRightOf="@id/vehicle_license_iv"
+                android:clickable="true"
+                android:onClick="updateIdentityFrontImage"
+                android:src="@drawable/user_dp" />
+
+            <TextView
+                android:layout_width="160dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/vehicle_photo_iv"
+                android:layout_toRightOf="@id/vehicle_license_tv"
+                android:gravity="center"
+                android:text="@string/vehicle_photo" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#000000" />
+
+        <TextView
+            android:layout_width="160dp"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:text="@string/note_bitian" >
+        </TextView>
+
+        <Button
+            android:id="@+id/submit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:onClick="submit"
+            android:text="@string/submit" >
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

@@ -78,6 +78,7 @@ public class FHorderFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		app = (CellSiteApplication) this.getActivity().getApplication();
 		initChooseAddressListener();
+		lazyLoad();
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class FHorderFragment extends Fragment {
 
 			isViewShown = true;
 
-			lazyLoad();
+	
 
 			// 相当于Fragment的onResume
 		} else {

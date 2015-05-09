@@ -133,6 +133,8 @@
     <string name="updateName">更改名字</string>
     <string name="updateNameHint">你的姓名</string>
     <string name="check_version">检查更新</string>
+    <string name="verify">认证</string>
+    <string name="logistics">物流圈</string>
 
     <!-- Setting  start -->
 
@@ -194,5 +196,18 @@
 
     <!-- Truck plan -->
     <string name="createTruckplan">创建行车计划</string>
+
+    <!-- verify Begin -->
+    <string name="user_verify">个人资料</string>
+    <string name="truck_verify">车辆资料</string>
+    <string name="identify_front">身份证正面</string>
+    <string name="identify_back">身份证反面</string>
+    <string name="driver_license">驾驶证照片</string>
+    <string name="truck_info">车辆信息</string>
+    <string name="license_plate">车牌号码</string>
+    <string name="vehicle_license">行驶证</string>
+    <string name="vehicle_photo">车头照片</string>
+    <string name="note_bitian">注：＊为必填项</string>
+    <string name="submit">提交</string>
 
 </resources>

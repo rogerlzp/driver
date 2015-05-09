@@ -212,15 +212,26 @@ public class LoginActivity extends BaseActivity {
 											.getString(CellSiteConstants.PROFILE_IMAGE_URL));
 						}
 						if (profileJson
-								.get(CellSiteConstants.IDENTITY_CARD_IMAGE_URL) != null) {
+								.get(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL) != null) {
 							sharedUser
 									.putString(
-											CellSiteConstants.IDENTITY_CARD_IMAGE_URL,
+											CellSiteConstants.IDENTITY_FRONT_IMAGE_URL,
 											profileJson
-													.getString(CellSiteConstants.IDENTITY_CARD_IMAGE_URL));
+													.getString(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL));
 							normalUser
-									.setIdentityImageUrl(profileJson
-											.getString(CellSiteConstants.IDENTITY_CARD_IMAGE_URL));
+									.setIdentityFrontImageUrl(profileJson
+											.getString(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL));
+						}
+						if (profileJson
+								.get(CellSiteConstants.IDENTITY_BACK_IMAGE_URL) != null) {
+							sharedUser
+									.putString(
+											CellSiteConstants.IDENTITY_BACK_IMAGE_URL,
+											profileJson
+													.getString(CellSiteConstants.IDENTITY_BACK_IMAGE_URL));
+							normalUser
+									.setIdentityBackImageUrl(profileJson
+											.getString(CellSiteConstants.IDENTITY_BACK_IMAGE_URL));
 						}
 					}
 

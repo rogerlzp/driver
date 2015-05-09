@@ -1,26 +1,16 @@
 package com.abc.driver;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import com.abc.driver.utility.CityDBReader;
+import com.abc.driver.wheel.widget.OnWheelChangedListener;
+import com.abc.driver.wheel.widget.OnWheelScrollListener;
+import com.abc.driver.wheel.widget.WheelView;
+import com.abc.driver.wheel.widget.adapters.AbstractWheelTextAdapter;
+import com.abc.driver.wheel.widget.adapters.ArrayWheelAdapter;
 
 public class TestActivity extends BaseActivity {
-	public static final String TAG = "TestActivity";
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		CityDBReader dbReader = new CityDBReader(this.getApplicationContext());
-		String pCode = "110000";
-		String cCode = "110100";
-		String dCode = "110101";
-		
-		String provinceName  = dbReader.getProvinceByCode(pCode).trim();
-		String cityName  = dbReader.getCityByCode(cCode).trim();
-		String districtName  = dbReader.getDistrictByCode(dCode).trim();
-		
-		
-		Log.d(TAG, provinceName + " city name: "+cityName + " district name: "+districtName);
-
-	}
 }
