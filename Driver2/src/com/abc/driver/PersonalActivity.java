@@ -99,7 +99,7 @@ public class PersonalActivity extends BaseActivity {
 		identityFrontImageUrl = app.getUser().getIdentityFrontImageUrl();
 
 		nameTv.setText(name_current);
-		mobileNumTv.setTag(mobile_current);
+		mobileNumTv.setText(mobile_current);
 		if (portraitImageUrl != null && !portraitImageUrl.equals("")) {
 			showImage(mUserPortraitIv, portraitImageUrl);
 		}

@@ -173,15 +173,6 @@ public class LoginActivity extends BaseActivity {
 
 					JSONObject userJson = response
 							.getJSONObject(CellSiteConstants.USER);
-					JSONObject profileJson = null;
-					try {
-						profileJson = response
-								.getJSONObject(CellSiteConstants.PROFILE);
-					} catch (JSONException e) {
-						Log.d(TAG, " The profile is not inited");
-						profileJson = null;
-						// response.get(CellSiteConstants.PROFILE);
-					}
 
 					normalUser.setId(userJson.getLong(CellSiteConstants.ID));
 					normalUser.setMobileNum(_username);
@@ -190,49 +181,123 @@ public class LoginActivity extends BaseActivity {
 							CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE)
 							.edit();
 
-					if (profileJson != null) {
-						if (profileJson.getString(CellSiteConstants.NAME) != null) {
-							normalUser.setName(profileJson
-									.getString(CellSiteConstants.NAME));
-						}
-						sharedUser.putString(CellSiteConstants.NAME,
-								profileJson.getString(CellSiteConstants.NAME));
+					if (userJson.getString(CellSiteConstants.NAME) != null
+							&& !userJson.getString(CellSiteConstants.NAME)
+									.equals("null")) {
+						normalUser.setName(userJson
+								.getString(CellSiteConstants.NAME));
+					}
+					sharedUser.putString(CellSiteConstants.NAME,
+							userJson.getString(CellSiteConstants.NAME));
 
-						if (profileJson
-								.get(CellSiteConstants.PROFILE_IMAGE_URL) == null) {
-							Log.d(TAG, "portrait is NULL");
-						} else {
+					if (userJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != null) {
+
+						sharedUser
+								.putString(
+										CellSiteConstants.PROFILE_IMAGE_URL,
+										userJson.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+						normalUser
+								.setProfileImageUrl(userJson
+										.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+					}
+					if (userJson
+							.get(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL) != null) {
+						sharedUser
+								.putString(
+										CellSiteConstants.IDENTITY_FRONT_IMAGE_URL,
+										userJson.getString(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL));
+						normalUser
+								.setIdentityFrontImageUrl(userJson
+										.getString(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL));
+					}
+					if (userJson.get(CellSiteConstants.IDENTITY_BACK_IMAGE_URL) != null) {
+						sharedUser
+								.putString(
+										CellSiteConstants.IDENTITY_BACK_IMAGE_URL,
+										userJson.getString(CellSiteConstants.IDENTITY_BACK_IMAGE_URL));
+						normalUser
+								.setIdentityBackImageUrl(userJson
+										.getString(CellSiteConstants.IDENTITY_BACK_IMAGE_URL));
+					}
+
+					if (userJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != null) {
+
+						sharedUser
+								.putString(
+										CellSiteConstants.DRIVER_LICENSE_URL,
+										userJson.getString(CellSiteConstants.DRIVER_LICENSE_URL));
+						normalUser
+								.setDriverLicenseImageUrl(userJson
+										.getString(CellSiteConstants.DRIVER_LICENSE_URL));
+					}
+
+					if (Integer.parseInt((String) userJson
+							.getString(CellSiteConstants.USER_AUDIT_STATUS)) != 0) {
+						int userAuditStatus = Integer
+								.parseInt((String) userJson
+										.getString(CellSiteConstants.USER_AUDIT_STATUS));
+						sharedUser.putInt(CellSiteConstants.USER_AUDIT_STATUS,
+								userAuditStatus);
+						normalUser.setUserAuditStatus(userAuditStatus);
+					}
+					if (Integer.parseInt((String) userJson
+							.get(CellSiteConstants.TRUCK_ID)) != 0) {
+
+						int truckId = Integer.parseInt((String) userJson
+								.get(CellSiteConstants.TRUCK_ID));
+
+						sharedUser.putInt(CellSiteConstants.TRUCK_ID, truckId);
+						normalUser.setUserAuditStatus(truckId);
+
+						if (userJson.get(CellSiteConstants.TRUCK_IMAGE_URL) != null) {
+
 							sharedUser
 									.putString(
-											CellSiteConstants.PROFILE_IMAGE_URL,
-											profileJson
-													.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+											CellSiteConstants.TRUCK_IMAGE_URL,
+											userJson.getString(CellSiteConstants.TRUCK_IMAGE_URL));
 							normalUser
-									.setProfileImageUrl(profileJson
-											.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+									.getMyTruck()
+									.setPhotoImageUrl(
+											userJson.getString(CellSiteConstants.TRUCK_IMAGE_URL));
 						}
-						if (profileJson
-								.get(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL) != null) {
+						
+						if (userJson.get(CellSiteConstants.TRUCK_PLATE) != null) {
+
 							sharedUser
 									.putString(
-											CellSiteConstants.IDENTITY_FRONT_IMAGE_URL,
-											profileJson
-													.getString(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL));
+											CellSiteConstants.TRUCK_PLATE,
+											userJson.getString(CellSiteConstants.TRUCK_PLATE));
 							normalUser
-									.setIdentityFrontImageUrl(profileJson
-											.getString(CellSiteConstants.IDENTITY_FRONT_IMAGE_URL));
+									.getMyTruck()
+									.setLincenPlateNumber(
+											userJson.getString(CellSiteConstants.TRUCK_PLATE));
 						}
-						if (profileJson
-								.get(CellSiteConstants.IDENTITY_BACK_IMAGE_URL) != null) {
+
+						if (userJson.get(CellSiteConstants.TRUCK_LICENSE_URL) != null) {
+
 							sharedUser
 									.putString(
-											CellSiteConstants.IDENTITY_BACK_IMAGE_URL,
-											profileJson
-													.getString(CellSiteConstants.IDENTITY_BACK_IMAGE_URL));
+											CellSiteConstants.TRUCK_LICENSE_URL,
+											userJson.getString(CellSiteConstants.TRUCK_LICENSE_URL));
 							normalUser
-									.setIdentityBackImageUrl(profileJson
-											.getString(CellSiteConstants.IDENTITY_BACK_IMAGE_URL));
+									.getMyTruck()
+									.setLicenseImageUrl(
+											userJson.getString(CellSiteConstants.TRUCK_LICENSE_URL));
 						}
+
+						if (Integer.parseInt((String) userJson
+								.get(CellSiteConstants.TRUCK_AUDIT_STATUS)) != 0) {
+
+							int truckAuditStatus = Integer
+									.parseInt((String) userJson
+											.get(CellSiteConstants.TRUCK_AUDIT_STATUS));
+							sharedUser.putInt(
+									CellSiteConstants.TRUCK_AUDIT_STATUS,
+									truckAuditStatus);
+							normalUser.getMyTruck().setTruckAuditStatus(
+									truckAuditStatus);
+						}
+
 					}
 
 					sharedUser
@@ -242,6 +307,7 @@ public class LoginActivity extends BaseActivity {
 					sharedUser.putString(CellSiteConstants.USER_ID, ""
 							+ userJson.getLong(CellSiteConstants.ID));
 					sharedUser.putString(CellSiteConstants.MOBILE, _username);
+
 
 					app.attachUser(normalUser);
 					sharedUser.commit();

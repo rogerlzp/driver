@@ -169,6 +169,19 @@ public class CellSiteApplication extends Application {
 		String identityBackImageUrl = sp.getString(
 				CellSiteConstants.IDENTITY_BACK_IMAGE_URL, null);
 
+		int userAuditStatus = sp.getInt(CellSiteConstants.USER_AUDIT_STATUS, 0);
+
+		// for driver only
+		String dirverLicenseImageUrl = sp.getString(
+				CellSiteConstants.DRIVER_LICENSE_URL, null);
+		String vehicleLicenseImageUrl = sp.getString(
+				CellSiteConstants.TRUCK_LICENSE_URL, null);
+		String vehiclePhotoImageUrl = sp.getString(
+				CellSiteConstants.TRUCK_IMAGE_URL, null);
+		int truckId = sp.getInt(CellSiteConstants.TRUCK_ID, 0);
+		int truckAuditStatus = sp.getInt(CellSiteConstants.TRUCK_AUDIT_STATUS,
+				0);
+
 		user = new User();
 		if (username != null) {
 			user.setUsername(username);
@@ -181,6 +194,26 @@ public class CellSiteApplication extends Application {
 			user.setName(name);
 			user.setIdentityFrontImageUrl(identityFrontImageUrl);
 			user.setIdentityBackImageUrl(identityBackImageUrl);
+
+			user.setUserAuditStatus(userAuditStatus);
+			// set user audit status
+
+			if (dirverLicenseImageUrl != null) {
+				user.setDriverLicenseImageUrl(dirverLicenseImageUrl);
+			}
+
+			if (truckId != 0) {
+				user.getMyTruck().setTruckId(truckId);
+				if (vehicleLicenseImageUrl != null) {
+					user.getMyTruck()
+							.setLicenseImageUrl(vehicleLicenseImageUrl);
+				}
+				if (vehiclePhotoImageUrl != null) {
+					user.getMyTruck().setPhotoImageUrl(vehiclePhotoImageUrl);
+				}
+				// set truck audit status
+				user.getMyTruck().setTruckAuditStatus(truckAuditStatus);
+			}
 			this.attachUser(user);
 		} else { // visitor mode
 			user.setId(User.INVALID_ID);
@@ -469,7 +502,8 @@ public class CellSiteApplication extends Application {
 		return gFHorderType;
 	}
 
-	public void setWorkHorderTypeCache(WorkHorderType aHorderTypeCache, int aIndex) {
+	public void setWorkHorderTypeCache(WorkHorderType aHorderTypeCache,
+			int aIndex) {
 		gWorkHorderType[aIndex] = aHorderTypeCache;
 	}
 

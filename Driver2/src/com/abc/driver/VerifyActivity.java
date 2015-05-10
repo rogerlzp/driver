@@ -48,8 +48,8 @@ public class VerifyActivity extends BaseActivity {
 
 	final String TAG = PersonalActivity.class.getSimpleName();
 
-	ImageView mUserPortraitIv, mUserIdentityFrontIv, mUserIdentityBackIv,
-			mDriverLicenseIv, mVehicleLicenseIv, mVehiclePhotoIv;
+	ImageView mUserIdentityFrontIv, mUserIdentityBackIv, mDriverLicenseIv,
+			mVehicleLicenseIv, mVehiclePhotoIv;
 	TextView driverLicenseTv;
 	EditText mTruckInfoEt;
 	EditText mTruckPlateNumberEt; // 车牌号码
@@ -61,8 +61,8 @@ public class VerifyActivity extends BaseActivity {
 	String userName, userPhone;
 
 	ProgressDialog mProgressdialog;
-	String name_current, mobile_current, portraitImageUrl,
-			identityFrontImageUrl, identityBackImageUrl, dirverLicenseImageUrl,
+	String name_current, mobile_current, identityFrontImageUrl,
+			identityBackImageUrl, dirverLicenseImageUrl,
 			vehicleLicenseImageUrl, vehiclePhotoImageUrl, truckPlateNumber,
 			truckInfo;
 
@@ -92,12 +92,11 @@ public class VerifyActivity extends BaseActivity {
 		mImageLoad = new ImageLoad(this);
 
 		initView();
-		initData();
+		// initData();
 		initViewData();
 	}
 
 	public void initView() {
-		mUserPortraitIv = (ImageView) findViewById(R.id.portrait_iv);
 		mUserIdentityFrontIv = (ImageView) findViewById(R.id.identity_front_iv);
 		mUserIdentityBackIv = (ImageView) findViewById(R.id.identity_back_iv);
 		mDriverLicenseIv = (ImageView) findViewById(R.id.driver_license_iv);
@@ -114,13 +113,12 @@ public class VerifyActivity extends BaseActivity {
 		truckVerifyll = (LinearLayout) findViewById(R.id.truck_verify_ll);
 
 		mTruckInfoEt = (EditText) findViewById(R.id.truck_info_update_tv);
-		mTruckInfoEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (hasFocus) {
-					showChoose();
-					v.setFocusable(false);
-					v.setFocusableInTouchMode(true);
-				}
+		mTruckInfoEt.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+
+				showChoose();
+				v.setFocusable(false);
+				v.setFocusableInTouchMode(true);
 			}
 
 		});
@@ -162,7 +160,6 @@ public class VerifyActivity extends BaseActivity {
 
 		name_current = app.getUser().getName();
 		mobile_current = app.getUser().getMobileNum();
-		portraitImageUrl = app.getUser().getProfileImageUrl();
 		identityFrontImageUrl = app.getUser().getIdentityFrontImageUrl();
 		identityBackImageUrl = app.getUser().getIdentityBackImageUrl();
 		dirverLicenseImageUrl = app.getUser().getDriverLicenseImageUrl();
@@ -171,12 +168,12 @@ public class VerifyActivity extends BaseActivity {
 				.getLicenseImageUrl();
 		vehiclePhotoImageUrl = app.getUser().getMyTruck().getPhotoImageUrl();
 
-		nameEt.setText(name_current);
-		mobileNumEt.setTag(mobile_current);
-
-		if (portraitImageUrl != null && !portraitImageUrl.equals("")) {
-			showImage(mUserPortraitIv, portraitImageUrl);
+		if (app.getUser().getName() != null
+				&& !app.getUser().getName().equals("null")) {
+			nameEt.setText(name_current);
 		}
+		mobileNumEt.setText(mobile_current);
+
 		if (identityFrontImageUrl != null && !identityFrontImageUrl.equals("")) {
 			showImage(mUserIdentityFrontIv, identityFrontImageUrl);
 		}
@@ -287,12 +284,6 @@ public class VerifyActivity extends BaseActivity {
 			mobileNumEt.setText(mobile_current);
 		}
 
-		String portraitImageUrl_tmp = app.getUser().getProfileImageUrl();
-		if (portraitImageUrl != null
-				&& !portraitImageUrl_tmp.equals(portraitImageUrl)) {
-			portraitImageUrl = portraitImageUrl_tmp;
-			showImage(mUserPortraitIv, portraitImageUrl);
-		}
 		String identityFrontImageUrl_tmp = app.getUser()
 				.getIdentityFrontImageUrl();
 		if (identityFrontImageUrl != null
@@ -381,33 +372,30 @@ public class VerifyActivity extends BaseActivity {
 
 	public void parseJson(JSONObject jsonResult) {
 		try {
-			JSONObject profileJson = jsonResult
-					.getJSONObject(CellSiteConstants.PROFILE);
 			JSONObject userJson = jsonResult
 					.getJSONObject(CellSiteConstants.USER);
 
-			if (profileJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != JSONObject.NULL) {
+			if (userJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != JSONObject.NULL) {
 				Log.d(TAG, "get the image url");
 				app.getUser()
 						.setProfileImageUrl(
-								profileJson
-										.getString(CellSiteConstants.PROFILE_IMAGE_URL));
+								userJson.getString(CellSiteConstants.PROFILE_IMAGE_URL));
 
 			}
-			if (profileJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != JSONObject.NULL) {
+			if (userJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != JSONObject.NULL) {
 				app.getUser()
 						.setDriverLicenseImageUrl(
-								profileJson
-										.getString(CellSiteConstants.DRIVER_LICENSE_URL));
+								userJson.getString(CellSiteConstants.DRIVER_LICENSE_URL));
 			}
-			if (profileJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
+			if (userJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
 				app.getUser().setName(
-						profileJson.getString(CellSiteConstants.NAME));
+						userJson.getString(CellSiteConstants.NAME));
 			}
-			if (userJson.get(CellSiteConstants.MOBILE) != JSONObject.NULL) {
-				app.getUser().setMobileNum(
-						userJson.getString(CellSiteConstants.MOBILE));
-			}
+			/*
+			 * if (userJson.get(CellSiteConstants.MOBILE) != JSONObject.NULL) {
+			 * app.getUser().setMobileNum(
+			 * userJson.getString(CellSiteConstants.MOBILE)); }
+			 */
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -709,6 +697,7 @@ public class VerifyActivity extends BaseActivity {
 		// 1. 检查是否都有值了
 		// 2. 提交后，保存一份在本地
 		// first check name is
+		truckPlateNumber = mTruckPlateNumberEt.getText().toString().trim();
 
 		if (nameEt.getText().toString().trim() == null) {
 			Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
@@ -760,7 +749,8 @@ public class VerifyActivity extends BaseActivity {
 
 		mVerifySubmitTask.execute("" + truckType, "" + truckLength, ""
 				+ truckWeight, truckPlateNumber, mobileNumEt.getText()
-				.toString().trim(), nameEt.getText().toString().trim());
+				.toString().trim(), nameEt.getText().toString().trim(), ""
+				+ app.getUser().getMyTruck().getTruckId());
 
 	}
 
@@ -768,7 +758,7 @@ public class VerifyActivity extends BaseActivity {
 		@Override
 		public Integer doInBackground(String... params) {
 			return verifySubmit(params[0], params[1], params[2], params[3],
-					params[4], params[5]);
+					params[4], params[5], params[6]);
 		}
 
 		@Override
@@ -780,13 +770,46 @@ public class VerifyActivity extends BaseActivity {
 				return;
 			}
 			if (result == CellSiteConstants.RESULT_SUC) {
+				Editor sharedUser = getSharedPreferences(
+						CellSiteConstants.CELLSITE_CONFIG, MODE_PRIVATE).edit();
+				sharedUser.putInt(CellSiteConstants.USER_AUDIT_STATUS,
+						CellSiteConstants.USER_STATUS_IN_AUDIT);
+				sharedUser.putInt(CellSiteConstants.TRUCK_AUDIT_STATUS,
+						CellSiteConstants.TRUCK_STATUS_IN_AUDIT);
+				sharedUser.putString(CellSiteConstants.NAME, nameEt.getText()
+						.toString().trim());
+
+				sharedUser.putString(CellSiteConstants.TRUCK_PLATE,
+						truckPlateNumber);
+
+				sharedUser.putInt(CellSiteConstants.TRUCK_LENGTH, truckLength);
+
+				sharedUser.putInt(CellSiteConstants.TRUCK_TYPE, truckType);
+				sharedUser.putInt(CellSiteConstants.TRUCK_WEIGHT, truckWeight);
+				sharedUser.commit();
+
+				app.getUser().setName(nameEt.getText().toString().trim());
+				app.getUser().getMyTruck()
+						.setLincenPlateNumber(truckPlateNumber);
+				app.getUser().getMyTruck().setTypeId(truckType);
+				app.getUser().getMyTruck().setLengthId(truckLength);
+				app.getUser().getMyTruck().setWeightId(truckWeight);
+
+				app.getUser().setUserAuditStatus(
+						CellSiteConstants.USER_STATUS_IN_AUDIT);
+				app.getUser()
+						.getMyTruck()
+						.setTruckAuditStatus(
+								CellSiteConstants.TRUCK_STATUS_IN_AUDIT);
+				sendTask();
+
 				//
 			}
 		}
 
 		protected Integer verifySubmit(String truckType, String truckLength,
 				String truckWeight, String licensePlateNumber,
-				String mobileNum, String name) {
+				String mobileNum, String name, String truckID) {
 			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 			postParameters.add(new BasicNameValuePair(
 					CellSiteConstants.TRUCK_TYPE, truckType));
@@ -795,7 +818,9 @@ public class VerifyActivity extends BaseActivity {
 			postParameters.add(new BasicNameValuePair(
 					CellSiteConstants.TRUCK_WEIGHT, truckWeight));
 			postParameters.add(new BasicNameValuePair(
-					CellSiteConstants.TRUCK_LICENSE, licensePlateNumber));
+					CellSiteConstants.TRUCK_PLATE, licensePlateNumber));
+			postParameters.add(new BasicNameValuePair(
+					CellSiteConstants.TRUCK_ID, truckID));
 			postParameters.add(new BasicNameValuePair(
 					CellSiteConstants.TRUCK_MOBILE_NUM, mobileNum));
 			postParameters.add(new BasicNameValuePair(CellSiteConstants.NAME,
@@ -820,6 +845,10 @@ public class VerifyActivity extends BaseActivity {
 			}
 			return CellSiteConstants.UNKNOWN_ERROR;
 		}
+	}
+
+	public void sendTask() {
+		this.finish();
 	}
 
 }

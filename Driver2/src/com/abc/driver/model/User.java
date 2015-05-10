@@ -13,7 +13,24 @@ public class User implements Serializable {
 	public String name; // 姓名
 	public String company;
 
+	public String identityCode;
+	public String driverLicense;
+	public String driverLicenseImageUrl;
+
+	public Truck myTruck;
+
 	public String mobileNum;
+	
+	
+	public int userAuditStatus;
+
+	public int getUserAuditStatus() {
+		return userAuditStatus;
+	}
+
+	public void setUserAuditStatus(int userAuditStatus) {
+		this.userAuditStatus = userAuditStatus;
+	}
 
 	public String getMobileNum() {
 		return mobileNum;
@@ -42,12 +59,6 @@ public class User implements Serializable {
 	public void setIdentityBackImageUrl(String identityBackImageUrl) {
 		this.identityBackImageUrl = identityBackImageUrl;
 	}
-
-	public String identityCode;
-	public String driverLicense;
-	public String driverLicenseImageUrl;
-
-	public Truck myTruck;
 
 	public String getName() {
 		return name;

@@ -51,8 +51,8 @@ public class TruckDetailActivity extends BaseActivity {
 				CellSiteConstants.TRUCK_TYPE, 1)]);
 		mTLtv.setText(CellSiteConstants.TruckLengths[intent.getIntExtra(
 				CellSiteConstants.TRUCK_LENGTH, 1)]);
-		mTPNtv.setText(intent.getStringExtra(CellSiteConstants.TRUCK_LICENSE));
-		mTPNtv.setText(intent.getStringExtra(CellSiteConstants.TRUCK_LICENSE));
+		mTPNtv.setText(intent.getStringExtra(CellSiteConstants.TRUCK_PLATE));
+		mTPNtv.setText(intent.getStringExtra(CellSiteConstants.TRUCK_PLATE));
 
 	}
 

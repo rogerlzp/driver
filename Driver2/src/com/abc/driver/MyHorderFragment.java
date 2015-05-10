@@ -443,11 +443,11 @@ public class MyHorderFragment extends Fragment {
 						mHorder.put(
 								CellSiteConstants.SHIPPER_ADDRESS_NAME,
 								dbReader.getNameFromCode((resultObj)
-										.getString(CellSiteConstants.SHIPPER_ADDRESS_CODE_IN)));
+										.getString(CellSiteConstants.SHIPPER_ADDRESS_CODE)));
 						mHorder.put(
 								CellSiteConstants.CONSIGNEE_ADDRESS_NAME,
 								dbReader.getNameFromCode((resultObj)
-										.getString(CellSiteConstants.CONSIGNEE_ADDRESS_CODE2)));
+										.getString(CellSiteConstants.CONSIGNEE_ADDRESS_CODE)));
 						mHorder.put(CellSiteConstants.CARGO_TYPE, (resultObj)
 								.getString(CellSiteConstants.CARGO_TYPE));
 						mHorder.put(CellSiteConstants.CARGO_WEIGHT, (resultObj)
