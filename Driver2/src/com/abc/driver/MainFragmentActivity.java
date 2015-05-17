@@ -32,7 +32,7 @@ public class MainFragmentActivity extends FragmentActivity {
 	private int three;
 
 	public static final String TAG = MainFragmentActivity.class.getSimpleName();
-	
+
 	public CellSiteApplication app;
 
 	@Override
@@ -43,7 +43,10 @@ public class MainFragmentActivity extends FragmentActivity {
 
 		mTabPager = (ViewPager) findViewById(R.id.tabpager);
 		mTabPager.setOnPageChangeListener(new MyOnPageChangeListener());
-		mFPAdapter = new MyFragmentPageAdapter(this.getSupportFragmentManager());
+
+		app = (CellSiteApplication) this.getApplication();
+		mFPAdapter = new MyFragmentPageAdapter(app,
+				this.getSupportFragmentManager());
 		mTabPager.setAdapter(mFPAdapter);
 
 		mTab1 = (ImageView) findViewById(R.id.img_weixin);
@@ -62,13 +65,17 @@ public class MainFragmentActivity extends FragmentActivity {
 		one = displayWidth / 4;
 		two = one * 2;
 		three = one * 3;
-		
-		app = (CellSiteApplication)this.getApplication();
+
 	}
 
 	public static class MyFragmentPageAdapter extends FragmentStatePagerAdapter {
-		public MyFragmentPageAdapter(FragmentManager fm) {
+		private CellSiteApplication app;
+
+		public MyFragmentPageAdapter(CellSiteApplication _app,
+				FragmentManager fm) {
+
 			super(fm);
+			app = _app;
 		}
 
 		@Override

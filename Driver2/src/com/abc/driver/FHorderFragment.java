@@ -67,6 +67,7 @@ public class FHorderFragment extends Fragment {
 
 	private boolean isViewShown;
 	private boolean isPrepared;
+	private boolean isVisible;
 
 	public static FHorderFragment newInstance() {
 		FHorderFragment mHCFragment = new FHorderFragment();
@@ -76,8 +77,9 @@ public class FHorderFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		Log.d(TAG, "onActivityCreated");
 		app = (CellSiteApplication) this.getActivity().getApplication();
-		initChooseAddressListener();
+
 		lazyLoad();
 	}
 
@@ -86,28 +88,40 @@ public class FHorderFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.main_tab_huoyun, container, false);
-
+		Log.d(TAG, "onCreateView");
 		isPrepared = true;
+
 		return view;
 	}
 
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
-		super.setUserVisibleHint(isVisibleToUser);
 
+		super.setUserVisibleHint(isVisibleToUser);
+		Log.d(TAG, "setUserVisibleHint");
+		
+		if (isVisibleToUser) {
+			Log.d(TAG, "isVisibleToUser: true");
+			isVisible = true;
+		} else {
+			Log.d(TAG, "isVisibleToUser: false");
+			isVisible = false;
+		}
 		if (this.getView() != null) {
 
 			isViewShown = true;
-
+			Log.d(TAG, "isViewShown true");
+			lazyLoad();
 			// 相当于Fragment的onResume
 		} else {
 			isViewShown = false;
+			Log.d(TAG, "isViewShown false");
 			// 相当于Fragment的onPause
 		}
 	}
 
 	public void lazyLoad() {
-		if (isViewShown && isPrepared) {
+		if (isVisible && isPrepared) {
 			Log.d(TAG, "lazyLoad");
 			initFHorders();
 		}
@@ -200,6 +214,8 @@ public class FHorderFragment extends Fragment {
 		mFHorderMore.setVisibility(View.GONE);
 
 		mFHolderMoreTv = (TextView) mFHorderMore.getChildAt(0);
+
+		initChooseAddressListener();
 
 		FHorderDetailListener mFHorderDetailListener = new FHorderDetailListener(
 				this.getActivity());
@@ -300,10 +316,11 @@ public class FHorderFragment extends Fragment {
 
 			if (IsShipperAddressChanged || IsConsigneeAddressChanged) {
 				app.setFHorderTypeCache(null); // 清空条件
-				if (mFHorderTypes.nHorders != null) {
+				if (mFHorderTypes != null && mFHorderTypes.nHorders != null) {
 					mFHorderTypes.nHorders.clear();
+					mFHorderTypes.nDisplayNum = 0;
 				}
-				mFHorderTypes.nDisplayNum = 0;
+
 			} else {
 				Log.d(TAG, "nothing changed");
 				// return TAG_RETURN;

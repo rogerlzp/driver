@@ -38,6 +38,7 @@ public class MeFragment extends Fragment {
 
 	private boolean isViewShown;
 	private boolean isPrepared;
+	private boolean isVisible;
 
 	public static MeFragment newInstance() {
 		Log.d(TAG, "newInstance");
@@ -104,7 +105,6 @@ public class MeFragment extends Fragment {
 	public void onResume() {
 		Log.d(TAG, "onResume");
 		super.onResume();
-		lazyLoad();
 
 		if (isViewShown && isPrepared) {
 			String name = app.getUser().getName();
@@ -141,10 +141,18 @@ public class MeFragment extends Fragment {
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		Log.d(TAG, "setUserVisibleHint");
 		super.setUserVisibleHint(isVisibleToUser);
-
 		if (isVisibleToUser) {
+			Log.d(TAG, "isVisibleToUser: true");
+			isVisible = true;
+		} else {
+			Log.d(TAG, "isVisibleToUser: false");
+			isVisible = false;
+		}
+
+		if (this.getView() != null) {
 
 			isViewShown = true;
+			lazyLoad();
 
 			// 相当于Fragment的onResume
 		} else {
@@ -154,7 +162,7 @@ public class MeFragment extends Fragment {
 	}
 
 	public void lazyLoad() {
-		if (isViewShown && isPrepared) {
+		if (isVisible && isPrepared) {
 			Log.d(TAG, "lazyLoad");
 			mImageLoad = new ImageLoad(this.getActivity());
 			mNameTv = (TextView) this.getActivity().findViewById(R.id.name_tv);

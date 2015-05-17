@@ -62,6 +62,7 @@ public class MyHorderFragment extends Fragment {
 
 	private boolean isViewShown;
 	private boolean isPrepared;
+	private boolean isVisible;
 
 	public static MyHorderFragment newInstance() {
 		MyHorderFragment mHCFragment = new MyHorderFragment();
@@ -70,6 +71,7 @@ public class MyHorderFragment extends Fragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		Log.d(TAG, "onActivityCreated");
 		super.onActivityCreated(savedInstanceState);
 		app = (CellSiteApplication) this.getActivity().getApplication();
 
@@ -78,7 +80,9 @@ public class MyHorderFragment extends Fragment {
 				new HorderArrivedListener());
 		mHorderTypes[1] = new WorkHorderType(1, this.getActivity(), ""
 				+ app.getUser().getId(), new HorderArrivedListener());
+
 		lazyLoad();
+
 	}
 
 	@Override
@@ -87,25 +91,35 @@ public class MyHorderFragment extends Fragment {
 		View view = inflater
 				.inflate(R.layout.main_tab_horder, container, false);
 		isPrepared = true;
+		Log.d(TAG, "onCreateView");
+		// lazyLoad();
 		return view;
 	}
 
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
-
+		if (isVisibleToUser) {
+			Log.d(TAG, "isVisibleToUser: true");
+			isVisible = true;
+		} else {
+			Log.d(TAG, "isVisibleToUser: false");
+			isVisible = false;
+		}
+		Log.d(TAG, "setUserVisibleHint");
 		if (this.getView() != null) {
 			isViewShown = true;
-		
-			// 相当于Fragment的onResume
+			lazyLoad();
+			Log.d(TAG, "setUserVisibleHint true");
 		} else {
 			isViewShown = false;
-			// 相当于Fragment的onPause
+			Log.d(TAG, "setUserVisibleHint false");
 		}
 	}
 
 	public void lazyLoad() {
-		if (isViewShown && isPrepared) {
+		Log.d(TAG, "lazyLoad");
+		if (isVisible && isPrepared) {
 			Log.d(TAG, "lazyLoad");
 			initHorders();
 			initChooseHorders();
@@ -256,8 +270,8 @@ public class MyHorderFragment extends Fragment {
 					.get(position).get(CellSiteConstants.TRUCK_TYPE));
 			intent.putExtra(
 					CellSiteConstants.STATUS,
-					Integer.parseInt((String) aHorders.get(position).get(
-							CellSiteConstants.STATUS)));
+					(Integer) aHorders.get(position).get(
+							CellSiteConstants.STATUS));
 			intent.putExtra(CellSiteConstants.SHIPPER_DATE, (String) aHorders
 					.get(position).get(CellSiteConstants.SHIPPER_DATE));
 			intent.putExtra(
@@ -468,6 +482,10 @@ public class MyHorderFragment extends Fragment {
 								CellSiteConstants.SHIPPER_USERNAME,
 								(resultObj)
 										.getString(CellSiteConstants.SHIPPER_USERNAME));
+						mHorder.put(
+								CellSiteConstants.SHIPPER_PHONE,
+								(resultObj)
+										.getString(CellSiteConstants.SHIPPER_PHONE));
 
 						JSONArray repliedDriversObj = null;
 						try {
@@ -556,15 +574,22 @@ public class MyHorderFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (app.getWorkHorderTypeCache(mCurrRadioIdx) != null) {
-			if (app.getWorkHorderTypeCache(mCurrRadioIdx).nHorders.size() != mHorderTypes[mCurrRadioIdx].nHorders
-					.size()) {
-				mHorderTypes[mCurrRadioIdx].nHorders = app
-						.getHorderTypeCache(mCurrRadioIdx).nHorders;
-				mHorderTypes[mCurrRadioIdx].nHorderAdapter
-						.notifyDataSetChanged();
+		Log.d(TAG, "onResume");
+		if (isVisible) {
+			if (app.getWorkHorderTypeCache(mCurrRadioIdx) != null
+					&& app.getWorkHorderTypeCache(mCurrRadioIdx).nHorders != null) {
+				if (app.getWorkHorderTypeCache(mCurrRadioIdx).nHorders.size() != mHorderTypes[mCurrRadioIdx].nHorders
+						.size()) {
+					if (mHorderTypes[mCurrRadioIdx] != null
+							&& mHorderTypes[mCurrRadioIdx].nHorders != null)
+						mHorderTypes[mCurrRadioIdx].nHorders = app
+								.getHorderTypeCache(mCurrRadioIdx).nHorders;
+					mHorderTypes[mCurrRadioIdx].nHorderAdapter
+							.notifyDataSetChanged();
+				}
 			}
 		}
+		// lazyLoad();
 
 	}
 

@@ -146,6 +146,7 @@ public class WorkHorderAdapter extends BaseAdapter {
 		public void onClick(View v) {
 			Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
 					+ phoneNum));
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			ctx.startActivity(intent);
 
 		}

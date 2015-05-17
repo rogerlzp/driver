@@ -205,28 +205,25 @@ public class PersonalActivity extends BaseActivity {
 
 	public void parseJson(JSONObject jsonResult) {
 		try {
-			JSONObject profileJson = jsonResult
-					.getJSONObject(CellSiteConstants.PROFILE);
 			JSONObject userJson = jsonResult
 					.getJSONObject(CellSiteConstants.USER);
 
-			if (profileJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != JSONObject.NULL) {
-				Log.d(TAG, "get the image url");
+			if (userJson.get(CellSiteConstants.PROFILE_IMAGE_URL) != JSONObject.NULL) {
 				app.getUser()
 						.setProfileImageUrl(
-								profileJson
+								userJson
 										.getString(CellSiteConstants.PROFILE_IMAGE_URL));
 
 			}
-			if (profileJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != JSONObject.NULL) {
+			if (userJson.get(CellSiteConstants.DRIVER_LICENSE_URL) != JSONObject.NULL) {
 				app.getUser()
 						.setDriverLicenseImageUrl(
-								profileJson
+								userJson
 										.getString(CellSiteConstants.DRIVER_LICENSE_URL));
 			}
-			if (profileJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
+			if (userJson.get(CellSiteConstants.NAME) != JSONObject.NULL) {
 				app.getUser().setName(
-						profileJson.getString(CellSiteConstants.NAME));
+						userJson.getString(CellSiteConstants.NAME));
 			}
 			if (userJson.get(CellSiteConstants.MOBILE) != JSONObject.NULL) {
 				app.getUser().setMobileNum(

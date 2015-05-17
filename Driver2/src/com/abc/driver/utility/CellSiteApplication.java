@@ -64,6 +64,7 @@ public class CellSiteApplication extends Application {
 
 	public static File cacheFileDir; // Download the file, dir
 	public String regUserPath;
+	int currentPageId = 0;
 
 	protected Truck truck = null; // truck ????????????app ???
 
